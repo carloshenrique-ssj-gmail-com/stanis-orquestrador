@@ -1,0 +1,1306 @@
+﻿html {
+  font: 9pt Arial;
+  --bg: #fafafa;
+  --bg2: #f7f9fc;
+  --bg3: #fcfcfc;
+  --bg4: #c8c8c8;
+  --bgh:#1a75ff;
+  --bgtext: #FCFCFC;
+  --fonttext: black;
+  --fonttext2: black;
+}
+
+.tabela{
+color: var(--fonttext);
+table-layout: fixed;
+line-break: anywhere;
+}
+
+.tabela td {
+  padding-top: 0.1px;
+  padding-bottom: 0.1px;
+  padding-left: 3px;
+  padding-right: 3px;
+  border-left: none;
+  border-right: none;
+  /* border-bottom: 1px solid #1a75ff; */
+}
+
+
+
+/* ------------------- animação aguardar ------------------*/
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10px; 
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--fonttext); /* Cor dos pontos */
+  border-radius: 50%;
+  margin: 0 3px;
+  animation: bounce 0.5s infinite ease-in-out;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+      transform: translateY(0);
+  }
+  40% {
+      transform: translateY(-7px);
+  }
+}
+/* ------------------- animação aguardar ------------------*/
+
+
+
+
+/* ------------------------------------------------------------------ */
+/* Aplica o estilo à tabela historico */
+#tbl_4 {
+  color: var(--fonttext);
+  table-layout: fixed;
+  line-break: anywhere;
+  width: 100%;
+}
+
+#tbl_4 th:nth-child(1),
+#tbl_4 td:nth-child(1) {
+  width: 16%;
+}
+
+#tbl_4 th:nth-child(2),
+#tbl_4 td:nth-child(2) {
+  width: 15%;
+}
+
+#tbl_4 th:nth-child(3),
+#tbl_4 td:nth-child(3) {
+  width: 10%;
+}
+
+#tbl_4 th:nth-child(4),
+#tbl_4 td:nth-child(4) {
+  width: 59%;
+}
+/* ------------------------------------------------------------------ */
+
+.txtTextBox {
+  background-color: var(--bgtext);
+  color: var(--fonttext);
+}
+.textarea {
+  background-color: var(--bgtext);
+  color: var(--fonttext);
+}
+.txtComboBox {
+  background-color: var(--bgtext);
+  color: var(--fonttext);
+}
+.txt {
+  background-color: var(--bgtext);
+  color: var(--fonttext);
+}
+
+body {
+  /* background: url("imagem2022.bmp") no-repeat; */
+  background-size: 100%;
+  background-color: var(--bg3);
+  color: var(--fonttext2);
+}
+
+
+.logo{
+position:absolute; 
+top:0.5833333333333333%; 
+right: 1.666666666666667%; 
+width: 8.333333333333333%; 
+height: 3.333333333333333%;
+
+}
+
+.div_centro{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.div_centro_inicio{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.div::before {
+content: " MIS ";
+font: 10pt Arial;
+font-weight: bold;
+color: white;
+background-color: #1a75ff;
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+top: -0.4166666666666667%;
+left: -0.8333333333333333%;
+width: 100.5%;
+}
+
+.div {
+  background-color: var(--bg2);
+  margin: 5% 0.8333333333333333% 2% auto;
+  padding: 0.4166666666666667%;
+  min-height:15%;
+  top: -0.8333333333333333%;
+  left: 1%;
+  width: 98%;
+  position: absolute;
+}
+
+._tarefas_move_arq_cadastro {
+    background-color: var(--bg2);
+    margin: 3% 0.8333333333333333% 2% auto;
+    padding: 0.1%;
+    min-height:15%;
+    top: 5%;
+    left: 0;
+    width: 98.5%;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 10px;
+}
+._tarefas_move_arq_cadastro::before {
+content: "Tarefas de Mover Arquivos    ";
+font: 12pt Arial;
+font-weight: bold;
+text-align: center;
+color: white;
+background-color: #1a75ff;/*1a75ff*/
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+left: -0.9%;
+width: 101.5%;
+border-radius: 3px;
+top: -5px;
+}
+
+
+._tarefas_move_arq_mft {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._tarefas_move_arq_mft::before {
+content: "Tarefas Controle Movimento Arquivos MFT   ";
+font: 12pt Arial;
+font-weight: bold;
+text-align: center;
+color: white;
+background-color: #1a75ff;/*1a75ff*/
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+left: -0.9%;
+width: 101.5%;
+border-radius: 3px;
+top: -5px;
+}
+
+
+._tarefas_up_arq_gcp {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._tarefas_up_arq_gcp::before {
+content: "Tarefas de Enviar Arquivos para GCP";
+font: 12pt Arial;
+font-weight: bold;
+text-align: center;
+color: white;
+background-color: #1a75ff;/*1a75ff*/
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+left: -0.9%;
+width: 101.5%;
+border-radius: 3px;
+top: -5px;
+}
+
+._arvore {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._arvore::before {
+  content: "Arvore de Processos";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;/*1a75ff*/
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101.5%;
+  border-radius: 3px;
+  top: -5px;
+}
+
+
+  ._tarefas_down_arq_gcp {
+    background-color: var(--bg2);
+    margin: 3% 0.8333333333333333% 2% auto;
+    padding: 0.1%;
+    min-height:15%;
+    top: 5%;
+    left: 0;
+    width: 98.5%;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 10px;
+  }
+  ._tarefas_down_arq_gcp::before {
+  content: "Tarefas de Baixar Arquivos da GCP";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;/*1a75ff*/
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101.5%;
+  border-radius: 3px;
+  top: -5px;
+  }
+
+
+  ._procedures_gcp {
+    background-color: var(--bg2);
+    margin: 3% 0.8333333333333333% 2% auto;
+    padding: 0.1%;
+    min-height:15%;
+    top: 5%;
+    left: 0;
+    width: 98.5%;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 10px;
+  }
+  ._procedures_gcp::before {
+  content: "Tarefas de Executar Procedures na GCP";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;/*1a75ff*/
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101.5%;
+  border-radius: 3px;
+  top: -5px;
+  }
+  
+
+  ._ler_arq_csv_do_bucket_para_tabela {
+    background-color: var(--bg2);
+    margin: 3% 0.8333333333333333% 2% auto;
+    padding: 0.1%;
+    min-height:15%;
+    top: 5%;
+    left: 0;
+    width: 98.5%;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 10px;
+  }
+  ._ler_arq_csv_do_bucket_para_tabela::before {
+  content: "Tarefas de Ler CSV do Bucket na GCP para Tabelas no BQ";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;/*1a75ff*/
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101.5%;
+  border-radius: 3px;
+  top: -5px;
+  }  
+  
+
+  ._tabela_tela_inicio {
+    background-color: var(--bg2);
+    margin: 3% 0.8333333333333333% 2% auto;
+    padding: 0.1%;
+    min-height:1%;
+    top: 5%;
+    left: 0;
+    width: 100%;
+    border-radius: 5px;
+        
+    }
+    ._tabela_tela_inicio::before {
+    content: "Tarefas em Execução   ";
+    font: 12pt Arial;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: #1a75ff;/*1a75ff*/
+    padding: 0.2166666666666667%;
+    left: -0.3%;
+    display: block;
+    position: relative;
+    width: 100%;
+    border-radius: 3px;
+    }
+
+    ._tabela_proximos {
+      background-color: var(--bg2);
+      margin: 3% 0.8333333333333333% 2% auto;
+      padding: 0.1%;
+      min-height:15%;
+      /*top: 5%;
+      left: 0;*/
+      width: 98.5%;
+      border-radius: 5px;
+  }
+  
+  ._tabela_proximos::before {
+    content: "Próximas Tarefas   ";
+    font: 12pt Arial;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: #1a75ff;
+    padding: 0.2166666666666667%;
+    display: block; 
+    position: relative;
+    left: -0.4%;
+    width: 100.3%;
+    border-radius: 3px;
+  }
+
+
+  ._tabela_cadeias_tela_principal {
+    background-color: var(--bg2);
+    margin: 3% 0.83% 8.33% auto;
+    padding: 0.1%;
+    min-height: 15%;
+    width: 98.5%;
+    border-radius: 5px;
+    table-layout: fixed;
+    line-break: strict;
+    position: relative;
+}
+
+._tabela_cadeias_tela_principal::before {
+    content: "Cadeias do Dia";
+    font: 12pt Arial;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: #1a75ff;
+    padding: 0.22%;
+    display: block; 
+    width: 100.3%;
+    border-radius: 3px;
+}
+
+
+    ._tabela_tela_fim {
+      background-color: var(--bg2);
+      margin: 3% 0.8333333333333333% 2% auto;
+      padding: 0.1%;
+      min-height:15%;
+      top: 5%;
+      left: 0;
+      width: 99.5%;
+      border-radius: 5px;
+       
+      
+      }
+      ._tabela_tela_fim::before {
+      content: "Falhas Não Tratadas";
+      font: 12pt Arial;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+      background-color: #1a75ff;/*1a75ff*/
+      padding: 0.2166666666666667%;
+      display: block;
+      position: relative;
+      left: -0.4%;
+      width: 100.3%;
+      border-radius: 3px;
+      }
+
+
+                 
+      ._tarefas_script_py {
+        background-color: var(--bg2);
+        margin: 3% 0.8333333333333333% 2% auto;
+        padding: 0.1%;
+        min-height:15%;
+        top: 5%;
+        left: 0;
+        width: 98.5%;
+        border-radius: 5px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        padding-left: 7px;
+        padding-right: 7px;
+        padding-bottom: 10px;
+      }
+      ._tarefas_script_py::before {
+      content: "Tarefas de Executar Scripts Python";
+      font: 12pt Arial;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+      background-color: #1a75ff;/*1a75ff*/
+      padding: 0.2166666666666667%;
+      display: block;
+      position: relative;
+      left: -0.9%;
+      width: 101.5%;
+      border-radius: 3px;
+      top: -5px;
+      }
+
+      ._tarefas_funcao_script_py {
+        background-color: var(--bg2);
+        margin: 3% 0.8333333333333333% 2% auto;
+        padding: 0.1%;
+        min-height:15%;
+        top: 5%;
+        left: 0;
+        width: 98.5%;
+        border-radius: 5px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        padding-left: 7px;
+        padding-right: 7px;
+        padding-bottom: 10px;
+      }
+      ._tarefas_funcao_script_py::before {
+      content: "Scripts Python de Gatilhos";
+      font: 12pt Arial;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+      background-color: #1a75ff;/*1a75ff*/
+      padding: 0.2166666666666667%;
+      display: block;
+      position: relative;
+      left: -0.9%;
+      width: 101.5%;
+      border-radius: 3px;
+      top: -5px;
+      }
+
+    ._tarefas_script_vbs {
+        background-color: var(--bg2);
+        margin: 3% 0.8333333333333333% 2% auto;
+        padding: 0.1%;
+        min-height:15%;
+        top: 5%;
+        left: 0;
+        width: 98.5%;
+        border-radius: 5px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        padding-left: 7px;
+        padding-right: 7px;
+        padding-bottom: 10px;
+    }
+    ._tarefas_script_vbs::before {
+      content: "Tarefas de Executar Scripts VBS";
+      font: 12pt Arial;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+      background-color: #1a75ff;/*1a75ff*/
+      padding: 0.2166666666666667%;
+      display: block;
+      position: relative;
+      left: -0.9%;
+      width: 101.5%;
+      border-radius: 3px;
+      top: -5px;
+    }
+
+
+._tarefas_script_sas {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._tarefas_script_sas::before {
+content: "Tarefas de Executar EGP SAS";
+font: 12pt Arial;
+font-weight: bold;
+text-align: center;
+color: white;
+background-color: #1a75ff;/*1a75ff*/
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+left: -0.9%;
+width: 101.5%;
+border-radius: 3px;
+top: -5px;
+}
+
+
+._tarefas_script_vba {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._tarefas_script_vba::before {
+content: "Tarefas de Executar Código VBA do Excel";
+font: 12pt Arial;
+font-weight: bold;
+text-align: center;
+color: white;
+background-color: #1a75ff;/*1a75ff*/
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+left: -0.9%;
+width: 101.5%;
+border-radius: 3px;
+top: -5px;
+}
+
+
+._tarefas_up_serv_sas {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._tarefas_up_serv_sas::before {
+content: "Tarefas de Enviar Arquivo para o Servidor do SAS";
+font: 12pt Arial;
+font-weight: bold;
+text-align: center;
+color: white;
+background-color: #1a75ff;/*1a75ff*/
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+left: -0.9%;
+width: 101.5%;
+border-radius: 3px;
+top: -5px;
+}
+
+
+._tarefas_down_serv_sas {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._tarefas_down_serv_sas::before {
+content: "Tarefas de Baixar Arquivo do Servidor do SAS";
+font: 12pt Arial;
+font-weight: bold;
+text-align: center;
+color: white;
+background-color: #1a75ff;/*1a75ff*/
+padding: 0.2166666666666667%;
+display: block;
+position: relative;
+left: -0.9%;
+width: 101.5%;
+border-radius: 3px;
+top: -5px;
+}
+
+._unir_tarefas {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.3%; 
+  padding-left: 10px;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+._unir_tarefas::before {
+  content: "Associar Tarefas";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101%;
+  border-radius: 3px;
+  top: -5px;
+}
+
+
+._cadastro_cadeias {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.3%; 
+  padding-left: 10px;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+._cadastro_cadeias::before {
+  content: "Cadastro de Cadeias";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101%;
+  border-radius: 3px;
+  top: -5px;
+}
+
+
+
+._cadastro_chat {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.3%; 
+  padding-left: 10px;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+._cadastro_chat::before {
+  content: "Cadastro Webhooks Google Chat";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101%;
+  border-radius: 3px;
+  top: -5px;
+}
+
+
+._cad_cadeias_recorrencia {
+  background-color: #e6f2ff;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 10px;
+  width: 18.5%;
+  margin-right: 10px;
+  border: 1px solid #dddcdc;
+}
+
+._cadastro_usuarios {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._cadastro_usuarios::before {
+  content: "Controle de Usuários";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;/*1a75ff*/
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101.5%;
+  border-radius: 3px;
+  top: -5px;
+}
+
+._cadastro_hostname {
+  background-color: var(--bg2);
+  margin: 3% 0.8333333333333333% 2% auto;
+  padding: 0.1%;
+  min-height:15%;
+  top: 5%;
+  left: 0;
+  width: 98.5%;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-bottom: 10px;
+}
+._cadastro_hostname::before {
+  content: "Cadastro Hostnames ";
+  font: 12pt Arial;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #1a75ff;/*1a75ff*/
+  padding: 0.2166666666666667%;
+  display: block;
+  position: relative;
+  left: -0.9%;
+  width: 101.5%;
+  border-radius: 3px;
+  top: -5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#g0 {
+width: 98%;
+height: 41.66666666666667%;
+}
+#g1 {
+width: 61.66666666666667%;
+height: 25%;
+float: left;
+}
+#g2 {
+width: 39.16666666666667%;
+height: 25%;
+float: left;
+}
+
+a {
+color: #273747;
+text-decoration: none;
+font-weight: bold;
+font: 11pt Helvetica;
+}
+
+a:hover {
+text-decoration: underline;
+}
+
+span.foco {
+font-weight: bold;
+color: #7e050c;
+}
+/*
+NOVO CODIGO DAQUI PARA BAIXO
+*/
+.txt{
+border:none;
+border:thin solid #ddd;
+border-radius: 3px;
+}
+.txtTextBox{
+border:none;
+border:thin solid #ddd;
+border-radius: 3px;
+min-height: 19px;
+}
+.txtTextBox:hover{
+border:thin solid #09F;
+box-shadow:0 2px 10px #09F;
+-webkit-box-shadow:0 2px 10px #09F;
+-moz-box-shadow:0 2px 10px #09F;
+border-radius: 5px;
+}
+.txtTextBox:focus{
+border:thin solid #09F;
+box-shadow:0 2px 10px #09F;
+-webkit-box-shadow:0 2px 10px #09F;
+-moz-box-shadow:0 2px 10px #09F;
+border-radius: 5px;
+}
+
+
+.txtComboBox{
+border:none;
+border:thin solid #ddd;
+border-radius: 3px;
+min-height: 23px;
+}
+.txtComboBox:hover{
+border:thin solid #09F;
+box-shadow:0 2px 10px #09F;
+-webkit-box-shadow:0 2px 10px #09F;
+-moz-box-shadow:0 2px 10px #09F;
+border-radius: 5px;
+}
+.txtComboBox:focus{
+border:thin solid #09F;
+box-shadow:0 2px 10px #09F;
+-webkit-box-shadow:0 2px 10px #09F;
+-moz-box-shadow:0 2px 10px #09F;
+border-radius: 5px;
+}
+
+.txt:focus{
+border:thin solid #09F;
+box-shadow:0 2px 10px #09F;
+-webkit-box-shadow:0 2px 10px #09F;
+-moz-box-shadow:0 2px 10px #09F;
+border-radius: 5px;
+}
+.txt:hover{
+border:thin solid #09F;
+box-shadow:0 2px 10px #09F;
+-webkit-box-shadow:0 2px 10px #09F;
+-moz-box-shadow:0 2px 10px #09F;
+border-radius: 5px;
+}
+
+.txtCheckBox{
+display:inline-block;
+width:17px;
+height:17px;
+margin: 0px 3px 2px 0;
+vertical-align:middle;
+cursor:pointer;
+}
+/*
+.txtCheckBox:hover{
+box-shadow:0 5px 5px #09F;   
+}
+*/
+.txtCheckBox1{
+width:15px;
+height:15px;
+cursor:pointer;
+}
+
+.txtLabel:hover{
+color: royalblue;    
+}
+
+.bt{
+border: none;  
+cursor: pointer;
+padding: 3px;
+border-radius: 5px;
+background: #1a75ff;
+color: #fff;
+min-height: 27px;
+min-width: 92px;
+text-align: center;
+}
+
+.bt:hover{
+background: #17A7F9; /* #09F;  */
+color: #FFF;
+box-shadow: 3px 7px 3px #CCCCCC;  
+}
+
+.bt1{  
+border: none;  
+cursor: pointer;
+padding: 3px;
+border-radius: 5px;
+background: #1a75ff;
+color: #fff;
+min-height: 45px;
+min-width: 140px;
+text-align: center;
+}
+
+.bt1:hover{
+background: #17A7F9; /* #09F;  */
+color: #FFF;
+box-shadow: 3px 7px 3px #CCCCCC;
+}
+
+#inicioCentralLogin{
+  position: absolute;
+  top: 7%;
+  left:40%;
+}
+
+#textoCentralLogin{
+  position: relative;
+  left:40%;
+  top: 17%;
+  align-content: center;
+  width: 100%;
+  margin-left: -80%;
+}
+
+.bt#inicio{
+  border: none;  
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 5px;
+  background: #1a75ff;
+  color: #fff;
+  width: 12.5%;
+  max-width: 150px;
+  height: 35px;
+  text-align: center;
+  min-height: 40px;
+  min-width: 200px;  
+}
+
+.bt#inicio:hover{
+background: #17A7F9; /* #09F;  */
+color: #FFF;
+box-shadow: 3px 10px 2px #CCCCCC;
+}
+
+.checkbox:hover{
+background:#09F;
+color:#FFF;
+}
+
+.checkbox:focus{
+border:thin solid #09F;
+box-shadow:0 2px 10px #09F;
+-webkit-box-shadow:0 2px 10px #09F;
+-moz-box-shadow:0 2px 10px #09F;
+}
+
+#botoesInicio{
+position: absolute;
+top: 10%;
+left:0.5%;
+display: block;
+width: 0;
+padding-top: 0px;
+}
+
+
+.fleft{
+float:left;
+}
+
+fright{
+float:right;
+}
+
+.txt,.txt:focus,.bt,.bt:focus{
+transition:all 0.5s linear;
+-webkit-transition:all 0.5s linear;
+-moz-transition:all 0.5s linear;
+}
+
+/* TABELA TESTE*/
+table {
+font-family: 'Helvetica';
+font-size: 9pt;
+text-align: left;
+width: 100%;
+border-collapse: collapse;
+border: 1px solid #09F;
+border-bottom: 2px solid #09F;
+box-shadow: 1px 1px 20px rgba(0,0,0,0.10),
+ 0px 10px 20px rgba(0,0,0,0.05),
+ 0px 20px 20px rgba(0,0,0,0.05),
+ 0px 30px 20px rgba(0,0,0,0.05);
+}
+
+th, td {
+  padding: 2px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover{
+  background-color:#1a75ff;
+  color:#FFF;  
+}  
+
+select{
+  border:none;
+  border:thin solid #ddd   
+}
+
+select:focus{
+  border:thin solid #09F;
+  box-shadow:0 2px 10px #09F;
+  -webkit-box-shadow:0 2px 10px #09F;
+  -moz-box-shadow:0 2px 10px #09F;
+  border-radius: 5px;
+}
+
+.acima{
+  display: inline-block;
+  flex-direction: column;
+}
+
+
+.bt00{
+	border: none;  
+	cursor: pointer;
+	padding: 1px;
+	border-radius: 12px;
+	background: #299fce;
+	color: #fff;
+	min-height: 2px;
+	min-width: 5px;
+	height: 25px;
+	width: 25px;	
+	text-align: center;
+  }
+  
+  .bt00:hover{
+	background: #0468ff; /* #09F;  */
+	color: #FFF;
+	box-shadow: 2px 5px 2px #CCCCCC;  
+  }
+
+  .bt01{
+    border: none;  
+    cursor: pointer;
+    padding: 1px;
+    border-radius: 12px;
+    background: #48D1CC;
+    color: #fff;
+    min-height: 2px;
+    min-width: 5px;
+    height: 25px;
+    width: 25px;	
+    text-align: center;
+    }
+    
+    .bt01:hover{
+    background: #00FFFF; /* #09F;  */
+    color: #FFF;
+    box-shadow: 2px 5px 2px #CCCCCC;  
+    }
+
+    .bt02{
+      border: none;  
+      cursor: pointer;
+      padding: 1px;
+      border-radius: 12px;
+      background: #cc0e3d;
+      color: #fff;
+      min-height: 2px;
+      min-width: 5px;
+      height: 25px;
+      width: 25px;	
+      text-align: center;
+      }
+      
+      .bt02:hover{
+      background: #f50410; /* #09F;  */
+      color: #FFF;
+      box-shadow: 2px 5px 2px #CCCCCC;  
+      }
+
+      ._imagens_icones:hover{
+        color: #FFF;
+        border-radius: 20px;
+        height: 30px;
+        width: 30px;
+        box-shadow: 4px 7px 4px #CCCCCC;  
+      }      
+
+      
+/*FIM DA TABELA*/
+
+
+
+/* Estilos dos botões nas tabelas */
+.btn_tab {
+  width: 50px;
+  height: 25px;
+  font-size: 9px; 
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logs {
+  background-color: #3498db;
+  color: white;
+}
+
+.parar {
+  background-color: #e67e22;
+  color: white;
+}
+
+.iniciar {
+  background-color: #95A5A6;
+  color: white;
+}
+
+.reiniciar {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.remover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.alterar {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.variavel_ambiente {
+  background-color: #009999;
+  color: white;
+}
+
+.btn_tab:hover {
+  background-color: white;
+  color: #152FE8;
+  font-weight: bold;
+  font-size: 9px; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Fim estilo para os botões */

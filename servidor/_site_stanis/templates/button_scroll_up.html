@@ -1,0 +1,91 @@
+<style>
+  .scroll-top-button,
+  .scroll-bottom-button {
+    display: none; 
+    position: fixed;
+    z-index: 9999;
+    bottom: 15px;
+    cursor: pointer;
+    padding: 10px 10px;
+    width: 40px;
+    height: 40px;
+    transition: right 0.3s ease, opacity 0.3s ease; 
+    border: none;
+    border-radius: 50%;
+  }
+
+  .scroll-top-button {
+    right: 15px;
+    background-color: rgba(132, 141, 147, 0.6);
+    color: #fff;
+  }
+
+  .scroll-bottom-button {
+    right: 80px; 
+    background-color: rgba(132, 141, 147, 0.6);
+    color: #fff;
+  }
+
+  .scroll-top-button.show,
+  .scroll-bottom-button.show {
+    display: block; 
+  }
+</style>
+
+<button id="scrollTopButton" class="scroll-top-button">&#9650;</button>
+<button id="scrollBottomButton" class="scroll-bottom-button">&#9660;</button>
+
+<script>
+  // CONTROLE DOS BOTÕES DE ROLAGEM
+  function toggleScrollButtons() {
+    var scrollTopButton = document.getElementById("scrollTopButton");
+    var scrollBottomButton = document.getElementById("scrollBottomButton");
+
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      scrollTopButton.classList.add("show");
+    } else {
+      scrollTopButton.classList.remove("show");
+    }
+
+    // Exibindo ou ocultando o botão de rolar para baixo
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 20) {
+      scrollBottomButton.classList.remove("show");
+    } else {
+      scrollBottomButton.classList.add("show");
+    }
+  }
+
+  function scrollToTop() {
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+      window.scrollTo(0, currentScroll - 100); /* Ajuste o valor para um movimento mais suave */
+      setTimeout(scrollToTop, 10);
+    }
+  }
+
+  function scrollToBottom() {
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    var scrollHeight = document.body.scrollHeight;
+
+    if (currentScroll < scrollHeight - window.innerHeight) {
+      window.scrollTo(0, currentScroll + 100); 
+      setTimeout(scrollToBottom, 10);
+    }
+  }
+
+  window.onscroll = function() {
+    toggleScrollButtons();
+  };
+
+  document.getElementById("scrollTopButton").addEventListener("click", function() {
+    scrollToTop();
+  });
+
+  document.getElementById("scrollBottomButton").addEventListener("click", function() {
+    scrollToBottom();
+  });
+
+  window.onload = function() {
+    toggleScrollButtons();
+  };
+</script>

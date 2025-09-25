@@ -1,0 +1,162 @@
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background-color: var(--bg3);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+  }
+
+.cls_a {
+	text-decoration: none;
+	transition: all 0.3s ease;
+}
+.cls_a:hover {
+  font-weight: bold;
+  color: #fff;
+}
+
+
+  .modal-content {
+    padding: 20px;
+	color:var(--fonttext);
+  }
+
+  .search-button {
+    position: absolute;
+    top: 55px;
+    right: 10px;
+    padding: 10px;
+    background-color: #1a75ff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .modal-search-button {
+    padding: 7px 14px;
+    background-color: #1a75ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+  }
+
+  #searchInput {
+    width: 85%;
+    padding: 7px;
+    margin-top: 7px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+
+  /* Zera qualquer interferência em #retorno */
+  #retorno {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Contêiner com scroll vertical */
+  .rolagem_modal_pesquisa {
+    width: 100% !important;
+    height: 500px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Override total na tabela */
+  .rolagem_modal_pesquisa table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    box-sizing: border-box !important;
+    /* Se precisar, force display block para evitar regras conflitantes */
+    display: block !important;
+  }
+
+  /* Override total nas células */
+  .rolagem_modal_pesquisa td {
+    padding: 4px !important;
+    word-break: break-word !important;
+  }
+</style>
+
+
+<script src="{{ url_for('static', filename='js/inicio_modal.js') }}"></script>
+
+<script>
+function tecla_enter(event) {
+	if (event.key === "Enter") {
+		func_pesq_id_tarefa_inicio();
+	}
+};
+</script>
+
+
+<button class="search-button" id="buscar1" onclick="openModal()" title="Clique para localizar uma tarefa pelo ID"></i>
+    <svg viewBox="0 0 24 24" width="24" height="24">
+        <path fill="none" stroke="#fff" stroke-width="2" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+</button>
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span onclick="closeModal()" style="cursor: pointer; float: right; font-size: 30px;">×</span>
+    <br>
+    <label for="searchInput" style="color: #555;"><b>Informe o Id tarefa ou um termo:</b></label><br>
+    <input type="text" id="searchInput" required min="1" max="9999" maxlength=150 pattern="\d*" onkeydown="tecla_enter(event)">
+
+    <button class="modal-search-button" id="buscar2" onclick="func_pesq_id_tarefa_inicio()">
+        <svg viewBox="0 0 24 24" width="15" height="15">
+            <path fill="none" stroke="#fff" stroke-width="2" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+    </button>
+    <br><br>
+    <div id="recebe_gif_processando"></div>
+
+      <div id="retorno"></div>
+
+  </div>
+</div>
+
+<div id="modalBackdrop" class="modal-backdrop"  onclick="closeModal()"></div>
+
+<script>
+  function openModal() {
+    document.getElementById('myModal').style.display = "block";
+    document.getElementById('modalBackdrop').style.display = "block";
+  }
+
+  function closeModal() {
+	document.getElementById('searchInput').value = "";
+	document.getElementById('retorno').innerHTML = "";
+    document.getElementById('myModal').style.display = "none";
+    document.getElementById('modalBackdrop').style.display = "none";
+  }
+</script>

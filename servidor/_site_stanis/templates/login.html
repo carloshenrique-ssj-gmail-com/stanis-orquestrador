@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+    <title>Stanis - Login</title>
+    <meta http-equiv='Content-Type' content='text/html' charset='UTF-8'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css1.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+	<script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}" type="text/javascript"></script>
+
+<style>
+  form a {
+    color: #2289f0;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  form a:hover {
+    text-decoration: underline;
+  }
+</style>    
+
+</head>
+<body>
+    <div class="div_centro">
+        <form method="post" action="{{ url_for('login') }}" name="form">
+            <center><img src="{{ url_for('static', filename='images/favicon.ico') }}" width="80px" height="70px"></center>
+            <section class="login" id="login" style="background-color:var(--bg2);">
+                <header>
+                    <font size="4px"><strong><center>Stanis</center></strong></font>
+                    <font size="2px"><strong><center>Orquestrador de Tarefas</center></strong></font>
+                </header>
+                <div style="background-color:var(--bg2);">
+                    <label for="vNome" style="color:var(--fonttext);">Usuario:</label><br>
+                    <input type="text" name="vNome" id="vNome" placeholder="Matricula" value="" size="30" class="txtTextBox" required="" maxlength="30"/><br><br>
+
+                    <label for="vSenha" style="color:var(--fonttext);">Senha:</label><br>
+                    <input type="password" name="vSenha" id="vSenha" placeholder="Senha" value="" size="30" class="txtTextBox" maxlength="15" required=""/><br>
+                </div>
+                <br>
+                <input type='submit' value='Login' class='bt' name='btAcessar'/>
+                <br><br>
+                <p style="text-align: center; margin-top: 12px;">
+                    <a href="cadastrar_senha">Alterar/Criar senha</a>
+                </p>
+                <br>
+                {% if mensagem %}
+                    <center><p style="color: red;">{{ mensagem }}</p></center>
+                {% endif %}
+            </section>
+            <br><br>
+        </form>
+    </div>
+</body>
+</html>

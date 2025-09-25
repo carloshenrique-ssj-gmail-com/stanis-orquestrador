@@ -1,0 +1,510 @@
+<!doctype html>
+<html>
+    <title>Stanis - Cadeias</title>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+        <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+        <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/componentes/funcoes.js') }}"></script>
+    </head>
+    <body>
+<!-- MENU -->
+{% include 'header.html' %}
+
+<!-- Botão Scroll Up -->
+{% include 'button_scroll_up.html' %}
+
+<!-- Modal Histórico -->
+{% include 'modal_historico.html' %}
+
+<!-- Modal Cadeias -->
+{% include 'modal_cadeias.html' %}
+
+<style>
+.zoom-celula {
+    font-size: 2px;
+    transition: font-size 0.3s ease;
+}
+.zoom-celula:hover {
+    font-size: 11px;
+}
+</style>
+
+
+
+<script>
+function funcao_remover_tarefa_unir(){
+    let txt_sel_assunto = document.getElementById('txt_sel_assunto');
+    let txt_sel_tarefa = document.getElementById('txt_sel_tarefa');
+    let txt_sel_cadeia = document.getElementById('txt_sel_cadeia_pri');
+
+    if(txt_sel_assunto.value == '' || txt_sel_tarefa.value == '' || txt_sel_cadeia.value == '')
+      {
+          alert('FALHA!\n\nFalta informações para realizar essa ação!\n\n');
+          return;
+      }else{
+        if (!confirm("CONFIRMAÇÃO\n\nConfirma a remoção da tarefa? (" + txt_sel_tarefa.value + ")\n\n") == true) {
+            return;
+      };
+    };
+
+    let texto_digitado = '';
+      texto_digitado = prompt("Escreva exatamente a palavra REMOVER: "); 
+      texto_digitado = String(texto_digitado).trim()
+      if(texto_digitado !== 'REMOVER'){
+          alert('\nREMOVER\n\nFALHA: A palavra digitada não atendeu aos requisitos.\n\nSolicitação CANCELADA!');
+          return;
+      }
+
+
+    let pagina = "remover_tarefa_unir";
+
+    $.ajax({
+        type: 'GET',
+        dataType: 'text',
+        url: pagina,
+        beforeSend: function () {
+            document.getElementById('btRemover').disabled = true;
+            $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: {
+            txt_sel_assunto: txt_sel_assunto.value,
+            txt_sel_tarefa: txt_sel_tarefa.value,
+            txt_sel_cadeia: txt_sel_cadeia.value 
+        },
+        success: function (data, textStatus, jqXHR){
+              if (jqXHR.status === 200) {
+                alert("SUCESSO!\n\n" + data + "\n\n");
+              }else{
+                alert("FALHA!\n\n" + data + "\n\n");
+              }
+                $('#recebe_gif_processando').html(''); 
+            document.getElementById('btRemover').disabled = false;                
+        }
+    })
+    document.getElementById('btRemover').disabled = false;
+};  
+</script>
+
+
+<script>
+
+function funcao_valida_salvar_processo(){
+    let txt_sel_assunto = document.getElementById('txt_sel_assunto');
+    let txt_sel_cadeia = document.getElementById('txt_sel_cadeia_pri');
+    let txt_sel_tarefa = document.getElementById('txt_sel_tarefa');
+
+     if(txt_sel_assunto.value == '' || txt_sel_tarefa.value == '' || txt_sel_cadeia.value == ''){
+          alert('FALHA\n\nFalta informações salvar!\n\n');
+          return;
+        };
+
+     if(txt_sel_assunto.value == ''){
+        alert('Falta informações Salvar!');
+        return;
+      };
+
+      if(txt_sel_cadeia.value == ''){
+        alert('Falta informações Salvar!');
+        return;
+      };
+
+      let pagina = "salvar_processo_unir";
+      $.ajax({
+            type: 'GET',
+            dataType: 'text',
+            url: pagina,
+            beforeSend: function () {
+                document.getElementById('btSalvar').disabled = true;
+                $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+            },
+            data: {
+                txt_sel_assunto: txt_sel_assunto.value,
+                txt_sel_tarefa: txt_sel_tarefa.value,
+                txt_sel_cadeia: txt_sel_cadeia.value                  
+            },
+            success: function (data, textStatus, jqXHR){
+              if (jqXHR.status === 200) {
+                alert("SUCESSO!\n\n" + data + "\n\n");
+              }else{
+                alert("AVISO!\n\n" + data + "\n\n");
+              }
+                $('#recebe_gif_processando').html(''); 
+                document.getElementById('btSalvar').disabled = false;                
+            },error: function (xhr, status, error) {
+                $('#recebe_gif_processando').html('Erro ao processar a requisição.'); 
+                console.error("Erro acesso aos dados:", status, error);
+            } 
+        });
+      document.getElementById('btSalvar').disabled = false;
+};  
+</script>
+
+
+<script>
+
+function funcao_pesquisa_temas(){
+    let pagina = "lista_temas";
+    $.ajax({
+        type: 'GET',
+        dataType: 'json', 
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: {},
+        success: function (data){
+            let select = $('#txt_sel_assunto');
+            select.empty();
+            select.append(new Option('', ''));
+            
+            data.forEach(function(item) {
+                let texto = item.tema;
+                select.append(new Option(texto, texto));
+            });
+            select.trigger('change.select2');
+
+            $('#recebe_gif_processando').html('');             
+        },
+        error: function(xhr, status, error) {
+            console.error('Erro na requisição:', error);
+            $('#recebe_gif_processando').html('Erro ao carregar dados');
+        }        
+    });    
+}
+</script>
+
+<script>
+function funcao_pesquisa_cadeias(){
+    let txt_sel_assunto = document.getElementById('txt_sel_assunto').value;
+    if(txt_sel_assunto == ''){return};
+    let pagina = "lista_cadeias";
+    $.ajax({
+        type: 'GET',
+        dataType: 'json', 
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: {
+            txt_sel_assunto: txt_sel_assunto
+        },
+        success: function (data){
+            let select = $('#txt_sel_cadeia_pri');
+            select.empty();
+            select.append(new Option('', ''));
+            data.forEach(function(item) {
+                let texto = item.cadeia + ' - ' + item.chave_cadeia;
+                select.append(new Option(texto, item.cadeia));
+            });
+            select.trigger('change.select2');
+            $('#recebe_gif_processando').html('');             
+        },
+        error: function(xhr, status, error) {
+            console.error('Erro na requisição:', error);
+            $('#recebe_gif_processando').html('Erro ao carregar dados');
+        }        
+    });    
+}
+</script>
+
+<script>
+// FIM FILTRO
+function maiuscula(str) {
+  str = str.trim().replace(/\s+/g, ' ').toLowerCase();
+  return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+
+function funcao_busca_processos(){
+  const txt_dt_pesq = document.getElementById('dt_pesq');
+  const txt_sel_assunto = document.getElementById('txt_sel_assunto');
+  const txt_sel_cadeia = document.getElementById('txt_sel_cadeia_pri');
+  if(txt_dt_pesq.value === ''){
+    alert('FALHA!\n\nInforme a data!\n\n');
+    return;
+  }
+  if(txt_sel_assunto.value === ''){
+    alert('FALHA!\n\nO tema não pode estar vazio!\n\n');
+    return;
+  }
+  const pagina = "buscar_processo_unir";
+  $.ajax({
+    type: 'GET',
+    dataType: 'json',
+    url: pagina,
+    beforeSend: function () {
+      $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+    },
+    data: {
+      txt_sel_assunto: txt_sel_assunto.value,
+      txt_sel_cadeia: txt_sel_cadeia.value,
+      txt_dt_pesq: txt_dt_pesq.value
+    },
+    success: function (data){
+      const resultados = data;
+      const tipos_links = {
+        '1': 'wrk_01_tf',
+        '2': 'wrk_02_up_gcp',
+        '3': 'wrk_03_down_gcp',
+        '4': 'wrk_04_procedure_gcp',
+        '5': 'wrk_05_script_py',
+        '6': 'wrk_06_script_sas',
+        '7': 'wrk_07_excel_vba',
+        '8': 'wrk_08_up_srv_sas',
+        '9': 'wrk_09_down_srv_sas',
+        '10': 'wrk_10_script_vbs',
+        '11': 'wrk_11_funcao_true_py',
+        '12': 'wrk_12_gcp_csv_tbl',
+        '13': 'wrk_13_tf_mft'
+      };
+      function abrirGrafico(assunto, cadeia) {
+			let url = '/hierarquia_cadeia?assunto=' + encodeURIComponent(assunto) + '&cadeia=' + encodeURIComponent(cadeia);
+			window.open(url, '_blank');
+		}
+      const hostlocal = window.location.origin;
+      let html = `<table border='0' id='_unir_tarefas' class='tabela'>
+    <thead>
+        <tr>
+            <td><strong>Tema</strong></td>
+            <td><strong>Cadeia</strong></td>
+            <td><strong>Id.</strong></td>
+            <td><strong>Dependencia</strong></td>
+            <td><strong>Hora</strong></td>
+            <td><strong>Repet.</strong></td>
+            <td><strong>Inter. Repet.</strong></td>
+            <td><strong>Nome Tarefa</strong></td>
+            <td><strong>Usuário</strong></td>
+            <td><strong>Tipo</strong></td>
+            <td><strong>Wrk</strong></td>
+            <td><strong>Status</strong></td>
+            <td><strong>Tag Bloq.</strong></td>
+            <td><strong>Host Fixo</strong></td>
+            <td><strong>Doc</strong></td>            
+        </tr>    
+    </thead>`;
+      let lastCadeia = "";
+      resultados.forEach(registro => {
+        if(registro.cadeia !== lastCadeia){
+          if(lastCadeia !== ""){
+            html += "</thead>";
+          }
+          html += `<thead class="agrupar_linhas">
+                      <tr>
+                        <td colspan="15" style="border: 2px; border-style: solid dashed; border-color: #09F; text-align: center; white-space: nowrap;">
+                          <a href="javascript:void(0)" onclick="abrirGrafico('${registro.assunto}', '${registro.cadeia}')" style="font-size: 1.0em;">
+                            ${maiuscula(registro.assunto)} - ${maiuscula(registro.cadeia)}
+                          </a>
+                        </td>
+                      </tr>
+                    </thead>`;
+          lastCadeia = registro.cadeia;
+        }
+        let link_stanis = '';
+        if(registro.tipo_servico && tipos_links[registro.tipo_servico] && registro.id_tarefa){
+          link_stanis = hostlocal + '/' + tipos_links[registro.tipo_servico] + '?linha=' + registro.id_tarefa;
+        } else {
+          link_stanis = hostlocal + '/inicio';
+        }
+        const hr_ini_e_fim = registro.hora_programada + ' até ' + registro.hora_fim;
+        html += `<tr style="font-size: 10px;">
+                  <td><p style="font-size:7px">${registro.assunto || ''}</p></td>
+                  <td><p style="font-size:7px">${registro.cadeia || ''}</p></td>
+                  <td><a class="cls_a" style="text-decoration: none; font-size: 10px;" title="Clique para localizar" href="${link_stanis}" target="_blank">${registro.id_tarefa || ''}</a></td>
+                  <td>${registro.depende || ''}</td>
+                  <td>${hr_ini_e_fim}</td>
+                  <td>${registro.num_repeticoes || ''}</td>
+                  <td>${registro.tempo_entre_repeticoes || ''}</td>
+                  <td>${registro.desc_b || ''}</td>
+                  <td>${registro.usuario || ''}</td>
+                  <td>${registro.tipo || ''}</td>
+                  <td>${registro.wrk_fixo || ''}</td>`;
+        if(registro.resultado === 'SUCESSO'){
+          html += `<td style="background-color: #ABEBC6;">${registro.resultado}</td>`;
+        } else if(registro.resultado === 'FALHA'){
+          html += `<td style="background-color: #F5B7B1;">${registro.resultado}</td>`;
+        } else {
+          html += `<td>${registro.resultado || ''}</td>`;
+        }
+        html += `<td>${registro.tag_bloq || ''}</td>
+                 <td><p style="font-size:7px">${registro.host_fixo || ''}</p></td>
+                 <td class="zoom-celula">${registro.obs || ''}</td>
+               </tr>`;
+      });
+      html += '</tbody></table>';
+      $('#tbl_1').html(html);
+      $('#recebe_gif_processando').html('');
+    },
+    error: function(xhr, status, error) {
+      console.error('Erro na requisição:', error);
+      $('#recebe_gif_processando').html('Erro ao carregar dados');
+    }
+  });
+}
+
+</script>
+
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+    <span title = 'Mudar cor de fundo'>
+    <label id="vDark001" for="switch" style="position: absolute;top:3.3%;left: 97%"><strong>IA</strong></label></span>
+</div>
+
+
+        <form method="post" action="/work_task" name="form">
+        <br>
+        <div class='_unir_tarefas'>
+            <br>
+
+            <div class='acima' style='width:27%;'>
+                <label for='txt_sel_assunto'><strong><font color="#2E86C1">Temas:</font></strong></label><br>
+                <select id='txt_sel_assunto' name='txt_sel_assunto' required class='txt' style='width:97%' onchange="funcao_pesquisa_cadeias();">
+                    <option value=''></option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:27%;'>
+                <label for='txt_sel_cadeia_pri'><strong><font color="#2E86C1">Cadeias:</font></strong></label><br>
+                <select id='txt_sel_cadeia_pri' name='txt_sel_cadeia_pri' required class='txt' style='width:97%'>
+                    <option value=''></option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:33%;'>
+                <label for='txt_sel_tarefa'><strong>Tarefa:</strong></label> <img src="{{ url_for('static', filename='images/static_img/atualizar_lista.png') }}" alt="Atualizar" title="Atualizar lista" onclick="listarTarefas()" style="max-width: 15px;max-height:15px;cursor: pointer;"> <br>
+                <select id='txt_sel_tarefa' name='txt_sel_tarefa' required class='txt' style='width:97%'>
+                <option value=''></option>
+                        <option value=""></option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:5%;'>
+                <label for='dt_pesq'><strong>Data:</strong></label><br>
+                <input type='date' id='dt_pesq' name='dt_pesq' min='2022-10-01' max='{{ today_date }}' value='{{ today_date }}' style='border:thin solid #ddd;border-radius: 3px;min-height: 24px;'>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                      const hoje = new Date();
+                      const dia = String(hoje.getDate()).padStart(2, '0');
+                      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+                      const ano = hoje.getFullYear();
+                      const dataFormatada = `${ano}-${mes}-${dia}`;
+                      const inputData = document.getElementById('dt_pesq');
+                      inputData.value = dataFormatada;
+                      inputData.max = dataFormatada;
+                    });
+                  </script>                
+            </div>
+
+            <br>
+            <br>
+
+            <input type="button" value="Buscar" onclick="funcao_busca_processos()" class="bt" name="btBuscar" id="btBuscar"/>
+            {% if session.perfil == '1' %}
+                <input type="button" value="Salvar" onclick="funcao_valida_salvar_processo()" class="bt" name="btSalvar" id="btSalvar"/>
+                <input type="button" value="Remover" onclick="funcao_remover_tarefa_unir()" class="bt" name="btRemover" id="btRemover"/>
+            {% else %}
+                <input type="button" value="Salvar" class="bt" name="btSalvar" id="btSalvar" disabled/>
+                <input type="button" value="Remover" class="bt" name="btRemover" id="btRemover" disabled/>
+            {% endif %}
+            <input type="button" value="Dados Cadeia" style="background-color: #9b59b6; padding: 6px;" onclick="abrir_dados_cadeia()" class="bt" name="btnModalCadastroCadeias" id="btnModalCadastroCadeias"/>
+            <br><br><br>
+
+            {% include 'filtro_simples.html' %}
+
+
+            <br><br>
+            <label id='recebe_gif_processando'></label>
+            <br><br><br>
+        </div>
+        <div id='tbl_1'></div>
+        <div id='retorno_x'></div>
+
+
+    <script>
+
+    function listarTarefas() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'listar_tarefas_uni', true);
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          try {
+            const tarefas = JSON.parse(xhr.responseText);
+            const select = document.getElementById('txt_sel_tarefa');
+            select.innerHTML = '';
+            const vazioOption = document.createElement('option');
+            vazioOption.textContent = '';
+            vazioOption.value = '';
+            select.appendChild(vazioOption);            
+            tarefas.forEach(tarefa => {
+              const option = document.createElement('option');
+              option.textContent = `${tarefa.id_tarefa}-${tarefa.descricao}`;
+              option.value = tarefa.id_tarefa;
+              select.appendChild(option);
+            });
+          } catch (erro) {
+            console.error('Erro ao converter JSON:', erro);
+          }
+        } else {
+          console.error('Erro na requisição. Status:', xhr.status);
+        }
+      };
+      xhr.onerror = function() {
+        console.error('Erro ao enviar a requisição.');
+      };
+      xhr.send();
+    }
+
+    </script>
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='js/jq/select2.min.css') }}">
+    <script src="{{ url_for('static', filename='js/jq/select2.min.js') }}"></script>
+
+</body>
+ 	<script>
+		function abrirGrafico(assunto, cadeia) {
+			let url = '/hierarquia_cadeia?assunto=' + encodeURIComponent(assunto) + '&cadeia=' + encodeURIComponent(cadeia);
+			window.open(url, '_blank');
+		}
+	</script>
+    <script>
+        $(function(){
+          $("#header-container").load("/componentes/header");
+          $("#scroll-up-button").load("/componentes/button_scroll_up");
+          $("#modal-historico-container").load("/componentes/modal_historico");
+          $("#modal-cadeias-container").load("/componentes/modal_cadeias");
+        });
+    </script>
+    
+
+<script>
+    $(document).ready(function() {
+        $('#txt_sel_tarefa').select2({
+        tags: false,
+        allowClear: true,
+        width: '100%',
+        });
+    });
+    $(document).ready(function() {
+        $('#txt_sel_cadeia_pri').select2({
+        tags: false,
+        allowClear: true,
+        width: '100%',
+        });
+    });
+    $(document).ready(function() {
+        $('#txt_sel_assunto').select2({
+        tags: false,
+        allowClear: true,
+        width: '100%',
+        });
+    });   
+    $(document).ready(function() { 
+        funcao_pesquisa_temas();
+        listarTarefas();
+    });
+</script>
+
+</html>

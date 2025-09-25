@@ -1,0 +1,564 @@
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: var(--bg2);
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        max-width: 850px;
+        height: 400px;
+        bottom: 0;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+
+ .arq_desc{
+    max-width: 5px;
+    max-height: 5px;
+    overflow: hidden;
+    background: #F2F4F4;
+    color: black;
+    border-left: 2px solid #EAEDED;
+    padding: 2px 2px;
+}
+
+#elementos_alt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;        
+  align-items: flex-start;
+}
+#elementos_alt #btAlterar {
+  order: 9999;
+  flex-basis: 100%; 
+}
+</style>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: var(--bg2);
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        max-width: 850px;
+        height: 400px;
+        bottom: 0;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+
+ .arq_desc{
+    max-width: 10px;
+    max-height: 10px;
+    overflow: hidden;
+    background: #F2F4F4;
+    color: black;
+    border-left: 2px solid #EAEDED;
+    padding: 2px 2px;
+}
+</style>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close">×</span>
+    <br>
+    <form id="alterarTarefaForm">
+        <img src="{{ url_for('static', filename='images/static_img/icones/alterar.png') }}" alt="Alterar Tarefa">
+        <div id="conteudoDivModal" style="margin: auto;text-align: center;align-items: center;">
+            <input type='text' id='_id' name='_id' value='9999' class='txt' disabled style='text-align:center;'/>
+        </div>
+        <!--- A PARTIR DAQUI -->
+        <br>
+        <div id="elementos_alt">
+
+                <div class='acima' style='width:20%; display: inline-block;'>
+                    <label for='_txt_hr_exe'><strong>Hora Execução:</strong></label><br>
+                    <input type='time' id='_txt_hr_exe' name='_txt_hr_exe' min="00:01" max="23:00" required class='txt' style='width:97%'/>
+                </div>
+                <div class='acima' style='width:20%; display: inline-block;'>
+                    <label for='_txt_hr_limit'><strong>Hora Limite:</strong></label><br>
+                    <input type='time' id='_txt_hr_limit' name='_txt_hr_limit' min="00:02" max="23:59" required class='txt' style='width:97%'/>
+                </div>
+
+                <div class='acima' style='width:26%; display: inline-block;'>
+                    <label for='_txt_recorrencia'><strong>Recorrencia:</strong></label><br>
+                    <select id='_txt_recorrencia' name='_txt_recorrencia' required class='txt' style='width:100%' onchange="funcao_frequencia2();">
+                        <option value='1'>Diaria</option>
+                        <option value='2'>Seg-Sex</option>
+                        <option value='3'>Mensal</option>
+                        <option value='4'>Semanal</option>
+                    </select>
+                </div>
+
+                <div class='acima' style='width:10%; display: inline-block;'>
+                    <label for='_txt_dia_mes' id='_txt_label_dia_mes'><strong>Dia:</strong></label><br>
+                    <input disabled type='number' id='_txt_dia_mes' name='_txt_dia_mes' min='1' max='31' value='' onkeyup="if(value<0 || value>31) value='';" maxlength='2' class='txt' style='width:90%'/>
+                </div>
+
+                <div class='acima' style='width:20%; display: inline-block;'>
+                    <label for='_txt_depend_tar'><strong>Depende da Tarefa:</strong></label><br>
+                    <input type='text' id='_txt_depend_tar' name='_txt_depend_tar' value='' onkeypress="return filtroTeclas(event);" maxlength='50' class='txt' style='width:97%'/>
+                </div>
+
+                <div class='acima' style='width:15%; display: inline-block;'>
+                    <label for='_txt_id_chat'><strong>Id Chat:</strong></label><br>
+                    <select id='_txt_id_chat' name='_txt_id_chat' required class='txt' style='width:97%'>
+                    <option value=''></option>
+                    {% for chat in chats %}
+                      <option value="{{ chat['codigo'] }}">{{ chat['nome_grupo'] }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+
+                <div class='acima' style='width:45%; display: inline-block;'>
+                    <label for='_txt_descicao_tar'><strong>Nome Tarefa:</strong></label><br>
+                    <input type='text' id='_txt_descicao_tar' name='_txt_descicao_tar' maxlength='100' required class='txt' style='width:98%'/>
+                </div>
+
+                <div class='acima' style='width: 15%; display: inline-block;'>
+                    <label for='_txt_work_fixo'><strong>Worker:</strong></label><br>
+                    <input type='number' id='_txt_work_fixo' name='_txt_work_fixo' min='0' max='9999' value='0' onkeyup="if(value<0 || value>9999) value='';" maxlength='7' class='txt' style='width:97%'/>
+                </div>
+
+                <div class='acima' style='width:22%; display: inline-block;'>
+                    <label for='_txt_host_fixo'><strong>Host Fixo:</strong></label><br>
+                    <select id='_txt_host_fixo' name='_txt_host_fixo' required class='txt' style='width:100%'>
+                    <option value='0'>Livre</option>
+                    {% for host in hosts %}
+                      <option value="{{ host['nome_maquina'] }}">{{ host['nome_maquina'] }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+
+                <div class='acima' style='width:98%;'>
+                    <label for='_txt_obs_tar'><strong>Doc:</strong></label><br>
+                    <textarea title='Este campo, no momento, não é obrigatório, mas é uma boa prática de controle de atividades descrever o que será executado neste processo.' id='_txt_obs_tar' name='_txt_obs_tar' value="" maxlength='4000' cols="150" rows="2" class='txt' style='width:100%'></textarea>
+                </div>
+
+                
+                <div class='acima' style='width: 15%; display: inline-block;'>
+                    <label for='_usuario'><strong>Responsável:</strong></label><br>
+                    <input type='text' id='_usuario' name='_usuario' maxlength='8' class='txt' style='width:95%'/>
+                </div>
+                <br>
+
+                <input type="button" style="background-color: #9b59b6;" value="Alterar" class="bt" name="btAlterar" id="btAlterar" onclick="salvar_alteracao_n()"/><br>
+
+                
+            </div>
+            <br><br>
+            <div id="mensagem_envio"></div>
+            <!-- ATÉ AQUI -->
+    </form>
+    <br>
+  </div>
+</div>
+
+<script>
+
+const closeModalBtn = document.querySelector(".close");
+const modal = document.getElementById("modal");
+closeModalBtn.onclick = function() {
+  modal.style.display = "none";
+}
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+
+function addElementosDiv(containerId, dynamicList) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  dynamicList.slice().reverse().forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'acima';
+    Object.assign(div.style, { width: f.width, display: 'inline-block' });
+    const label = document.createElement('label');
+    label.htmlFor = f.id;
+    label.innerHTML = `<strong>${f.label}:</strong>`;
+    const br = document.createElement('br');
+
+    let input;
+    if (f.type === 'select') {
+      input = document.createElement('select');
+      (f.options || []).forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.value;
+        opt.textContent = o.text;
+        input.append(opt);
+      });
+    } else if (f.type === 'textarea') {
+      input = document.createElement('textarea');
+      if (f.rows) input.rows = f.rows;
+      if (f.cols) input.cols = f.cols;
+    } else {
+      input = document.createElement('input');
+      input.type = f.type;
+    }
+
+    input.id = f.id;
+    input.name = f.id;
+    input.className = 'txt';
+    Object.entries(f.attrs || {}).forEach(([k, v]) => input.setAttribute(k, v));
+    div.append(label, br, input);
+    container.insertBefore(div, container.firstChild);
+  });
+}
+addElementosDiv('elementos_alt', novos_elementos);
+
+
+function tela_alteracao(id_tar, tela) {
+  const tabela = document.getElementById('tbl_1');
+  for (let i = 0; i < tabela.rows.length; i++) {
+    const linha = tabela.rows[i];
+    if (linha.cells[0].innerText.trim() === String(id_tar)) {
+      
+      // monta objeto de posições
+      const posicoesDaLinha = {
+        rowIndex: i,
+        campos: {
+          '_id': 0,
+          '_txt_descicao_tar': 1,
+          '_usuario': 2,
+          '_origem': 3,
+          '_destino': 4,
+          '_txt_hr_exe': 5,
+          '_txt_hr_limit': 6,
+          '_txt_recorrencia': 7,
+          '_txt_dia_mes': 8,
+          '_txt_depend_tar': 9,
+          '_txt_id_chat': 10,
+          '_txt_work_fixo': 12,
+          '_txt_obs_tar': 13,
+          '_txt_host_fixo': 14
+        }
+      };
+      // torna acessível para uso no salvar
+      window.posicoesDaLinha = posicoesDaLinha;
+      
+      // preenche campos do modal
+      document.getElementById('_id').value = String(linha.cells[0].innerText);
+      document.getElementById('_txt_descicao_tar').value = String(linha.cells[1].innerText);
+      document.getElementById('_usuario').value = String(linha.cells[2].innerText);
+
+      const obj_origem = JSON.parse(linha.cells[3].innerText);
+      document.getElementById('_txt_bucket_dir').value         = obj_origem.txt_bucket_dir;
+      document.getElementById('_txt_ini_arq').value            = obj_origem.txt_ini_arq;
+      document.getElementById('_txt_lista_header').value       = String(obj_origem.txt_lista_header).replace(/,/g, ';');
+      document.getElementById('_txt_seperador').value          = obj_origem.txt_seperador;
+
+      const obj_destino = JSON.parse(linha.cells[4].innerText);
+      document.getElementById('_txt_tabela_destino').value           = obj_destino.txt_tabela_destino;
+      document.getElementById('_txt_recriar_tabela').value           = obj_destino.txt_recriar_tabela;
+      document.getElementById('_txt_linha_cabecalho').value          = obj_destino.txt_linha_cabecalho;
+      document.getElementById('_txt_lista_validar_duplicidade').value = String(obj_destino.txt_lista_validar_duplicidade).replace(/,/g, ';');
+
+      document.getElementById('_txt_hr_exe').value       = String(linha.cells[5].innerText);
+      document.getElementById('_txt_hr_limit').value     = String(linha.cells[6].innerText);
+      const selRec = document.getElementById('_txt_recorrencia');
+
+      const textoRec = linha.cells[7].innerText.trim();
+      const opc = Array.from(selRec.options)
+        .find(o =>
+          o.text.trim().toLowerCase() === textoRec.toLowerCase() ||
+          o.value.toLowerCase() === textoRec.toLowerCase()
+        );
+      if (opc) {
+        selRec.value = opc.value;
+      } else {
+        selRec.selectedIndex = -1;
+      }
+
+      document.getElementById('_txt_dia_mes').value      = String(linha.cells[8].innerText);
+      document.getElementById('_txt_depend_tar').value   = String(linha.cells[9].innerText);
+      document.getElementById('_txt_id_chat').value      = String(linha.cells[10].innerText);
+
+      document.getElementById('_txt_work_fixo').value = String(linha.cells[12].innerText);
+      document.getElementById('_txt_obs_tar').value   = String(linha.cells[13].innerText);
+
+      if (linha.cells[14]?.innerText !== 'undefined') {
+        document.getElementById('_txt_host_fixo').value  = String(linha.cells[14].innerText);
+      }
+
+      // exibe modal
+      document.getElementById('modal').style.display = 'block';
+      return;
+    }
+  }
+}
+
+
+function salvar_alteracao_n() {
+  if (!confirm("Confirma a alteração da tarefa?")) return;
+
+  // 1) coleta valores do formulário
+  const id_tarefa                  = document.getElementById('_id').value.trim();
+  const txt_descicao_tar           = document.getElementById('_txt_descicao_tar').value.trim();
+  const txt_usuario                = document.getElementById('_usuario').value.trim();
+  const txt_bucket_dir             = document.getElementById('_txt_bucket_dir').value.trim();
+  const txt_ini_arq                = document.getElementById('_txt_ini_arq').value.trim();
+  const txt_lista_header           = formatarColunas(
+    document.getElementById('_txt_lista_header').value.trim().toUpperCase()
+  );
+  const txt_seperador              = document.getElementById('_txt_seperador').value.trim();
+  const txt_tabela_destino         = document.getElementById('_txt_tabela_destino').value.trim();
+  const txt_recriar_tabela         = document.getElementById('_txt_recriar_tabela').value.trim();
+  const txt_linha_cabecalho        = document.getElementById('_txt_linha_cabecalho').value.trim();
+  const txt_lista_validar_duplicidade = formatarColunas(
+    document.getElementById('_txt_lista_validar_duplicidade').value.trim().toUpperCase()
+  );
+  const txt_hr_exe                  = document.getElementById('_txt_hr_exe').value.trim();
+  const txt_hr_limit                = document.getElementById('_txt_hr_limit').value.trim();
+  const txt_recorrencia             = document.getElementById('_txt_recorrencia').value.trim();
+  const txt_dia_mes                 = document.getElementById('_txt_dia_mes').value.trim();
+  const txt_depend_tar              = document.getElementById('_txt_depend_tar').value.trim().toLowerCase();
+  const txt_id_chat                 = document.getElementById('_txt_id_chat').value.trim();
+  const txt_work_fixo               = document.getElementById('_txt_work_fixo').value.trim();
+  const txt_obs_tar                 = document.getElementById('_txt_obs_tar').value.trim().replace(/[';]/g, "");
+  const txt_host_fixo               = document.getElementById('_txt_host_fixo').value.trim();
+
+  // 2) validações
+  if (!id_tarefa || id_tarefa === '9999') {
+    alert('Falta informação para alterar a tarefa!');
+    return;
+  }
+  if (txt_depend_tar && !valida_padrao_dependencia(txt_depend_tar)) {
+    alert('Formato do Id dependência inválido.');
+    return;
+  }
+  if ((txt_recorrencia === '3' || txt_recorrencia === '4') && !txt_dia_mes) {
+    alert(
+      txt_recorrencia === '3'
+        ? 'Para recorrência mensal é obrigatório informar o dia do mês.'
+        : 'Para recorrência semanal é obrigatório informar o dia da semana.'
+    );
+    return;
+  }
+  const camposObrigatorios = {
+    'Descrição da tarefa':      txt_descicao_tar,
+    'Usuário':                  txt_usuario,
+    'Local Bucket':             txt_bucket_dir,
+    'Início do arquivo':        txt_ini_arq,
+    'Lista Header':             txt_lista_header,
+    'Separador':                txt_seperador,
+    'Tabela Destino':           txt_tabela_destino,
+    'Recriar Tabela':           txt_recriar_tabela,
+    'Linha Cabeçalho':          txt_linha_cabecalho,
+    'Hora de Execução':         txt_hr_exe,
+    'Hora Limite':              txt_hr_limit,
+    'Recorrência':              txt_recorrencia,
+    'Work Fixo':                txt_work_fixo
+  };
+  for (const [label, val] of Object.entries(camposObrigatorios)) {
+    if (!val) {
+      alert(`Campo obrigatório vazio: ${label}`);
+      return;
+    }
+  }
+
+  // 3) monta payload
+  const obj_origem  = { txt_bucket_dir, txt_ini_arq, txt_lista_header, txt_seperador };
+  const obj_destino = {
+    txt_tabela_destino,
+    txt_recriar_tabela,
+    txt_linha_cabecalho,
+    txt_lista_validar_duplicidade
+  };
+  const payload = {
+    id_tarefa,
+    origem: JSON.stringify(obj_origem),
+    destino: JSON.stringify(obj_destino),
+    txt_hr_exe,
+    txt_hr_limit,
+    txt_recorrencia,
+    txt_dia_mes,
+    txt_depend_tar,
+    txt_descicao_tar,
+    txt_id_chat,
+    txt_usuario: txt_usuario.toUpperCase(),
+    txt_work_fixo,
+    txt_obs_tar,
+    txt_host_fixo
+  };
+
+  // 4) AJAX
+  const $btn = $('#btAlterar');
+  $.ajax({
+    type: 'GET',
+    url: pagina,
+    dataType: 'text',
+    data: { data: JSON.stringify(payload) },
+    beforeSend() {
+      $btn.prop('disabled', true);
+      $('#mensagem_envio').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+    },
+    success(resposta, textStatus, jqXHR) {
+      $btn.prop('disabled', false);
+      $('#mensagem_envio').empty();
+      $('.close').click();
+      alert(resposta);
+
+      // —— atualizar a linha na tabela —— //
+      const pos = window.posicoesDaLinha;
+      if (pos) {
+        const tabela = document.getElementById('tbl_1');
+        const row    = tabela.rows[pos.rowIndex];
+
+        Object.entries(pos.campos).forEach(([campo, colIndex]) => {
+          let valorParaCelula;
+
+          switch (campo) {
+            case '_id':
+              valorParaCelula = id_tarefa;
+              break;
+            case '_txt_descicao_tar':
+              valorParaCelula = txt_descicao_tar;
+              break;
+            case '_usuario':
+              valorParaCelula = txt_usuario.toUpperCase();
+              break;
+            case '_origem':
+              valorParaCelula = JSON.stringify(obj_origem);
+              break;
+            case '_destino':
+              valorParaCelula = JSON.stringify(obj_destino);
+              break;
+            case '_txt_hr_exe':
+              valorParaCelula = txt_hr_exe;
+              break;
+            case '_txt_hr_limit':
+              valorParaCelula = txt_hr_limit;
+              break;
+            case '_txt_recorrencia': {
+              const sel = document.getElementById('_txt_recorrencia');
+              valorParaCelula = sel instanceof HTMLSelectElement
+                ? sel.options[sel.selectedIndex].text.trim()
+                : txt_recorrencia;
+              break;
+            }
+            case '_txt_dia_mes':
+              valorParaCelula = txt_dia_mes;
+              break;
+            case '_txt_depend_tar':
+              valorParaCelula = txt_depend_tar;
+              break;
+            case '_txt_id_chat':
+              valorParaCelula = txt_id_chat;
+              break;
+            case '_txt_work_fixo':
+              valorParaCelula = txt_work_fixo;
+              break;
+            case '_txt_obs_tar':
+              valorParaCelula = txt_obs_tar;
+              break;
+            case '_txt_host_fixo':
+              valorParaCelula = txt_host_fixo;
+              break;
+            default:
+              return; // pula campos não mapeados
+          }
+
+          const cell = row.cells[colIndex];
+          // preserva a formatação
+          // atualiza só o textContent dele; caso contrário, atualiza o próprio cell
+          if (cell.children.length === 1 && cell.firstElementChild instanceof HTMLElement) {
+            cell.firstElementChild.textContent = valorParaCelula;
+          } else {
+            cell.textContent = valorParaCelula;
+          }          
+
+        });
+      }
+    },
+    error(xhr, status, erro) {
+      $btn.prop('disabled', false);
+      $('#mensagem_envio').empty();
+      alert("ERRO AO TENTAR ALTERAR TAREFA: " + erro);
+    }
+  });
+}
+
+
+
+
+
+function funcao_frequencia2(){
+    let txt_recorrencia = document.getElementById('_txt_recorrencia');
+    let txt_dia_mes = document.getElementById('_txt_dia_mes');
+
+    if(txt_recorrencia.value == '3')
+      {
+            txt_dia_mes.removeAttribute('disabled');
+            txt_dia_mes.value = '1';
+            document.getElementById('_txt_dia_mes').setAttribute('min', '1');
+            document.getElementById('_txt_dia_mes').setAttribute('max', '31');
+            document.getElementById('_txt_dia_mes').setAttribute('onkeyup', "if(value<1 || value>31) value='';");
+            return;
+
+      }else if(txt_recorrencia.value == '4')
+      {
+            txt_dia_mes.removeAttribute('disabled');
+            txt_dia_mes.value = '0';
+            document.getElementById('_txt_dia_mes').setAttribute('min', '0');
+            document.getElementById('_txt_dia_mes').setAttribute('max', '6');
+            document.getElementById('_txt_dia_mes').setAttribute('onkeyup', "if(value<0 || value>6) value='';");
+            return;
+      } else
+      {
+        txt_dia_mes.value = '';
+        txt_dia_mes.disabled = true;
+        return;
+      };
+};    
+</script>

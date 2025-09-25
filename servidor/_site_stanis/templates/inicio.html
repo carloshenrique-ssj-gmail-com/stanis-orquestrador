@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+    {% set timezone = "America/Bahia" %}
+    {% set logged_in = session.get('login', None) %}
+    {% if not logged_in %}
+        {% set _ = redirect(url_for('login')) %}
+    {% else %}
+        {% set logado = logged_in %}
+        {% set perfil = session.get('perfil', '') %}
+    {% endif %}
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icone_atualizar_tela_inicio.css') }}" type="text/css"/>
+    <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/botoes.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/grafico_tela/apexcharts.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/grafico_tela/graficos_inicio.js') }}" type="text/javascript"></script>
+    <title>Stanis - Home</title>
+</head>
+{% include 'button_scroll_up.html' %}
+
+<body>
+{% include 'modal_historico.html' %}
+<!-- MENU -->
+{% include 'header.html' %}
+<div class='container'>
+        <br><br><br>
+        <div style="display: flex;width: 100%;">
+
+			<div style='position:absolute;left:0;display: flex; flex-direction: column; align-items: flex-start; padding-left: 10px;width:80vh;'>
+				<div id='wrks_ativos' style="display: flex; flex-wrap: wrap; padding: 10px;width:100%;height:100%;"></div>
+			</div>
+
+            <div style='margin: 0 auto;'>
+                 <center><img src="{{ url_for('static', filename='images/favicon.ico') }}" width="80px" height="70px"></center>
+                 <font size="5px" color="#2289f0"><strong title="Data Pipeline Control"><center>Orquestrador de Tarefas</center></strong></font>
+                 <font size="2px" color="#7f7f7f"><strong title="Fly By Wire"><center>Stanis - Data Pipeline Control</center></strong></font>
+			</div>
+
+        </div>
+        <br><br>
+
+
+        <div class='_tabela_tela_inicio'>
+            <div style="margin-top: -38px; right:1%; position: absolute; z-index: 1;">
+                <div class="refresh-button" onclick="buscar_dados('icon1')" title="Atualizar">
+                    <svg class="refresh-icon" id="icon1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8v3l4-4-4-4v3z"/>
+                    </svg>
+                </div>
+            </div>
+            <table borde='1' id='tbl_1' class='tabela'>
+
+                <thead>
+                    <tr>
+                        <td><strong>Id</strong></td>
+                        <td><strong>Wrk</strong></td>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>Assunto</strong></td>
+                        <td><strong>Cadeia</strong></td>
+                        <td><strong>Nome</strong></td>
+                        <td><strong>Tempo Exec.</strong></td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+		<div>
+            <div style="margin-top: -25px; right:1%; position: absolute; z-index: 1;">
+                <div class="refresh-button" onclick="buscar_dados('icon2')" title="Atualizar">
+                    <svg class="refresh-icon" id="icon2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8v3l4-4-4-4v3z"/>
+                    </svg>
+                </div>
+            </div>
+			<br>
+			<div id="chart1" style="width: 100%; height: 240px; border-radius: 5px;background-color: var(--bg2);background-color: var(--bg2);"></div>
+
+        </div>
+
+        <div class='_tabela_tela_fim' style="width:98%;">
+            <div style="margin-top: -38px; right:1%; position: absolute; z-index: 1;">
+                <div class="refresh-button" onclick="buscar_dados('icon3')" title="Atualizar">
+                    <svg class="refresh-icon" id="icon3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8v3l4-4-4-4v3z"/>
+                    </svg>
+                </div>
+            </div>
+            <table borde='1' id='tbl_2' class='tabela'>
+                <thead>
+                    <tr>
+                        <td><strong>Id</strong></td>
+                        <td><strong>Wrk</strong></td>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>Assunto</strong></td>
+                        <td><strong>Cadeia</strong></td>
+                        <td><strong>Nome</strong></td>
+                        <td><strong>Tempo Exec.</strong></td>
+                        <td><strong>Fim Exec.</strong></td>
+                        <td><strong>Resultado</strong></td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <div class='_tabela_proximos' style="width:98%;">
+            <div style="margin-top: -38px; right:1%; position: absolute; z-index: 1;">
+                <div class="refresh-button" onclick="buscar_dados('icon4')" title="Atualizar">
+                    <svg class="refresh-icon" id="icon4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8v3l4-4-4-4v3z"/>
+                    </svg>
+                </div>
+            </div>
+            <table borde='1' id='tbl_3' class='tabela'>
+                <thead>
+                    <tr>
+                        <td><strong>Id</strong></td>
+                        <td><strong>Wrk</strong></td>
+                        <td><strong>Tipo</strong></td>
+                        <td><strong>Assunto</strong></td>
+                        <td><strong>Cadeia</strong></td>
+                        <td><strong>Nome</strong></td>
+                        <td><strong>Aguardando Anterior</strong></td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+
+<input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+</div>
+</body>
+
+
+<script type="text/javascript">
+
+// Controle de execução
+let executando_js = false;
+
+window.onload = async function () {
+    if (executando_js) return;
+
+    executando_js = true;
+    funcao_wrk_ativos()
+    try {
+        await delay(500);
+        funcao_tars_executando();
+
+        await delay(1000);
+        atualizar_grafico_hora_hora();
+
+        await delay(1000);
+        funcao_tars_executadas();
+    } finally {
+        executando_js = false;
+    }
+};
+
+function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
+const clickTimers = {}; // Objeto para armazenar o último clique de cada ícone
+
+function buscar_dados(icone) {
+    const agora = Date.now();
+
+    if (clickTimers[icone] && agora - clickTimers[icone] < 10000) {
+        alert('Por favor, aguarde 10 segundos entre as atualizações.');
+        return;
+    }
+
+    if (executando_js) {
+        alert('Uma atualização está em andamento. Tente novamente em alguns segundos.');
+        return;
+    }
+
+    const icone_x = document.getElementById(icone);
+
+    executando_js = true;
+    icone_x.classList.remove('spinning');
+    void icone_x.offsetWidth;
+    icone_x.classList.add('spinning');
+
+    clickTimers[icone] = agora;
+
+    setTimeout(() => {
+        try {
+            if (icone === 'icon1') {
+                funcao_tars_executando();
+            } else if (icone === 'icon2') {
+                atualizar_grafico_hora_hora();
+            } else if (icone === 'icon3') {
+                funcao_tars_executadas();
+            } else if (icone === 'icon4') {
+                funcao_proximas_tars();
+            }
+        } catch (error) {
+            alert("Erro na execução da função:" + String(error));
+        } finally {
+            executando_js = false;
+            icone_x.classList.remove('spinning');
+        }
+    }, 1500);
+}
+
+
+</script>
+
+<script>
+    function abrirGrafico(assunto, cadeia) {
+        var url = 'wrk_hierarquia?assunto=' + encodeURIComponent(assunto) + '&cadeia=' + encodeURIComponent(cadeia);
+        window.open(url, '_blank');
+    }
+</script>
+
+{% include 'inicio_modal.html' %}
+
+</html>

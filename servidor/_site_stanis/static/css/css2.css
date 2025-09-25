@@ -1,0 +1,24 @@
+
+  .div_grafico_viz {
+    
+    margin: 9.5% 0.8333333333333333% 8.333333333333333% auto;
+    padding: 0.4166666666666667%;
+    min-height:15%;
+    top: -0.8333333333333333%;
+    left: 1%;
+    width: 97%;
+    height: 79%;
+    position: absolute;
+    /*cursor: pointer;*/
+    cursor: grab;
+    background-color: var(--bg3);
+    background-image: radial-gradient(var(--bg4) 0.1px, transparent 0.5px),
+                      radial-gradient(var(--bg3) 0.1px, transparent 0.5px);
+    background-size: 7px 7px;
+    background-position: 0 0, 7px 7px;
+    background-clip: text;
+  }
+
+.div_grafico_viz:active {
+    cursor: grabbing;
+}

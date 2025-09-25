@@ -1,0 +1,128 @@
+<!doctype html>
+
+<html>
+
+<title>Stanis - Graficos Historicos</title>    
+<head> 
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/apexcharts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/graficos.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+</head>
+
+    <body>
+    {% include 'header.html' %}
+    {% include 'button_scroll_up.html' %}
+    <div>
+        <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+    </div>    
+    <br><br><br><br>    
+    <form>
+        <div style="display: flex; align-items: center;font-weight: bold;">
+        <div class="acima">
+            <label for="data_ini">Inicio:</label><br>
+            <input type="date" id="data_ini" name="data_ini" class="txtTextBox" required style="width:100px;height:50px;">&nbsp &nbsp 
+        </div>
+        <div class="acima">
+            <label for="data_fim">Fim:</label><br>
+            <input type="date" id="data_fim" name="data_fim" class="txtTextBox" required style="width:100px;height:50px;">&nbsp &nbsp 
+        </div>
+        <div class="acima">
+            <label for="assuntos">Lista de Assuntos:</label><br>
+            <select multiple id="assuntos" name="assuntos[]" class="txtTextBox" style="width:230px;height: 50px;">
+                {% for assunto in assuntos %}
+                    <option value="{{ assunto['tema'] }}">{{ assunto['tema'] }}</option>
+                {% endfor %}
+            </select>&nbsp &nbsp
+        </div>
+        <div class="acima">
+            <label for="cadeias">Lista de Cadeias:</label><br>
+            <select multiple id="cadeias" name="cadeias[]" class="txtTextBox" style="width:250px;height: 50px;">
+                {% for cadeia in cadeias %}
+                    <option value="{{ cadeia['cadeia'] }}">{{ cadeia['cadeia'] }}</option>
+                {% endfor %}
+            </select>&nbsp &nbsp
+        </div>  
+        <div class="acima">
+            <label for="maquinas">Maquinas:</label><br>
+            <select multiple id="maquinas" name="maquinas[]" class="txtTextBox" style="width:160px;height: 50px;">
+                {% for maquina in maquinas %}
+                    <option value="{{ maquina['nome_maquina'] }}">{{ maquina['nome_maquina'] }}</option>
+                {% endfor %}
+            </select>&nbsp &nbsp
+        </div>    
+
+        <div class="acima">
+            <label for="servicos">Serviços:</label><br>
+            <select multiple id="servicos" name="servicos[]" class="txtTextBox" style="width:150px;height: 50px;">
+                <option value='Down Arq GCP'>Down Arq GCP</option>
+                <option value='Down Arq SAS'>Down Arq SAS</option>
+                <option value='EGP SAS'>EGP SAS</option>
+                <option value='Excel VBA'>Excel VBA</option>
+                <option value='Mover Arq'>Mover Arq</option>
+                <option value='Proced GCP'>Proced GCP</option>
+                <option value='Python'>Python</option>
+                <option value='Script VBS'>Script VBS</option>
+                <option value='Up Arq GCP'>Up Arq GCP</option>
+                <option value='Up Arq SAS'>Up Arq SAS</option>
+                <option value='Fun. Py Gatilho'>Fun. Py Gatilho</option>
+				<option value='Import Arq. Bucket BQ'>Import Arq. Bucket BQ</option>
+                <option value='Movimento MFT'>Movimento MFT</option>
+                
+            </select>&nbsp &nbsp
+        </div>      
+
+        <div class="acima">
+            <br>
+            <button type="button" onclick="enviarParametros()" id="btEnviar" style="height: 50px;" class="bt">Pesquisar</button>
+        </div><br>       
+        </div>
+        <div id="visualFiltro"></div>
+        <div id="recebe_gif_processando"></div>
+    </form>
+
+    <script>
+        var dataAtual = new Date();
+        var formatoData = dataAtual.toISOString().slice(0, 10);
+        document.getElementById('data_ini').value = formatoData;
+        document.getElementById('data_fim').value = formatoData;
+    </script>
+
+    <br><br>
+    <hr style="width: 99%;border-top: 1px solid #5DADE2;">
+        <center><h1 style="color: #2E86C1;">Informações Mês a Mês</h1></center>
+    <hr style="width: 99%;border-top: 1px solid #5DADE2;">
+    <br><br>
+    <div style="width: 98.5%;display: inline-block;margin: 5 5;box-shadow: 2px 5px 3px #a6a6a6;border-radius: 10px;background-color: #fcfcfc;">
+        <div id="chart7" style="width: 98%;float:left;"></div><br><br><br>
+        <div id="chart8" style="width: 98%;float:left;"></div><br><br><br>
+        <div id="chart10" style="width: 98%;float:left;"></div><br><br>
+    </div>
+    <br><br>
+
+    <hr style="width: 99%;border-top: 1px solid #5DADE2;">
+        <center><h1 style="color: #2E86C1;">Informações Hora a Hora</h1></center>
+    <hr style="width: 99%;border-top: 1px solid #5DADE2;">
+    <br><br>
+    <div style="width: 98.5%;height: 260px; display: inline-block;margin: 5 5;box-shadow: 2px 5px 3px #a6a6a6;border-radius: 10px;background-color: #fcfcfc;">
+        <div id="chart1" style="width: 75%;float:left;"></div>
+        <div id="chart5" style="width: 25%;float:left;"></div>
+    </div>
+    <br><br>
+    <div style="width: 98.5%;height: 260px; display: inline-block;margin: 5 5;box-shadow: 2px 5px 3px #a6a6a6;border-radius: 10px;background-color: #fcfcfc;">
+        <div id="chart2" style="width: 75%;float:left;"></div>
+        <div id="chart4" style="width: 25%;float:left;"></div>
+    </div>
+
+    <br><br>
+    <div style="width: 98.5%;height: 260px; display: inline-block;margin: 5 5;box-shadow: 2px 5px 3px #a6a6a6;border-radius: 10px;background-color: #fcfcfc;">
+        <div id="chart3" style="width: 75%;float:left;"></div>
+        <div id="chart6" style="width: 25%;float:left;"></div>
+    </div>
+
+    </body>   
+</html>

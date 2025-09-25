@@ -1,0 +1,228 @@
+<style>
+.modal_cadeias {
+    display: none; /* Vai ser alterado para 'flex' quando o modal estiver ativo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.modal_cadeias-content {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 70%; 
+    margin: 10% auto; 
+    padding: 20px;
+    position: relative;
+    height: 35%; 
+}
+
+.closeCadeias {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+</style>
+
+<div id="modalCadastroCadeia" class="modal_cadeias">
+    <div class="modal_cadeias-content">
+        <span id="closeModalCadeias" onclick="fechar_dados_cadeia()" class="closeCadeias">&times;</span>
+
+        <div id='dados_cadeia_modal'>
+
+                <div class='acima' style='width:45.5%;'>
+                    <label for='txt_sel_gerencia'><strong>Gerência:</strong></label><br>
+                    <input type='text' id='txt_sel_gerencia' name='txt_sel_gerencia' required class='txt' style='width:97%' readonly>
+                </div>
+
+                <div class='acima' style='width:45%;'>
+                    <label for='txt_sel_coordenacao'><strong>Coordenação:</strong></label><br>
+                    <input type='text' id='txt_sel_coordenacao' name='txt_sel_coordenacao' required class='txt' style='width:97%' readonly>
+                </div>
+
+                <br>
+                <br>            
+
+                <div class='acima' style='width:30%;'>
+                    <label for='txt_sel_tema'><strong>Tema:</strong></label><br>
+                    <input type='text' id='txt_sel_tema' name='txt_sel_tema' required class='txt' style='width:97%' readonly>
+                </div>
+
+                <div class='acima' style='width:30%;'>
+                    <label for='txt_sel_temasub'><strong>Sub-Tema:</strong></label><br>
+                    <input type='text' id='txt_sel_temasub' name='txt_sel_temasub' required class='txt' style='width:97%' readonly>
+                </div>
+
+                <div class='acima' style='width:30%;'>
+                    <label for='txt_sel_produto_dados'><strong>Produto de Dados:</strong></label><br>
+                    <input type='text' id='txt_sel_produto_dados' name='txt_sel_produto_dados' required class='txt' style='width:97%' readonly>
+                </div>
+
+                <br>
+                <br>  
+
+                <div class='acima' style='width:30%;'>
+                    <label for='txt_sel_cadeia'><strong>Cadeia:</strong></label><br>
+                    <input type='text' id='txt_sel_cadeia' name='txt_sel_cadeia' required class='txt' style='width:97%' readonly>     
+                </div>
+
+                <div class='acima' style='width:15%;'>
+                    <label for='txt_sel_tipo_cadeia'><strong>Tipo Cadeia:</strong></label><br>
+                    <input type='text' id='txt_sel_tipo_cadeia' name='txt_sel_tipo_cadeia' required class='txt' style='width:97%' readonly>
+                </div>
+                
+                <div class='acima' style='width:15%;'>
+                    <label for='txt_sel_origem'><strong>Sistema Origem:</strong></label><br>
+                    <input type='text' id='txt_sel_origem' name='txt_sel_origem' required class='txt' style='width:97%' readonly>
+                </div>
+
+                <div class='acima' style='width:15%;'>
+                    <label for='txt_sel_destino'><strong>Sistema Destino:</strong></label><br>
+                    <input type='text' id='txt_sel_destino' name='txt_sel_destino' required class='txt' style='width:97%' readonly>
+                </div>
+                <br><br>
+                <div class='acima' style='width:14.7%;'>
+                    <label for='txt_sel_dataset'><strong>Dataset GCP:</strong></label><br>
+                    <input type='text' id='txt_sel_dataset' name='txt_sel_dataset' required class='txt' style='width:97%' readonly>
+                </div>
+                
+                <div class='acima' style='width:14.7%;'>
+                    <label for='txt_sel_cod_gcp'><strong>Chave GCP:</strong></label><br>
+                    <input type='text' id='txt_sel_cod_gcp' name='txt_sel_cod_gcp' required class='txt' style='width:97%' readonly>
+                </div>
+
+            </div>
+
+    </div>
+</div>
+<script>
+document.getElementById('modalCadastroCadeia').style.display = 'none';
+
+function abrir_dados_cadeia() {
+    let txt_sel_assunto = document.getElementById('txt_sel_assunto').value;
+    let txt_sel_cadeia = document.getElementById('txt_sel_cadeia_pri').value; 
+    if(txt_sel_assunto == '' || txt_sel_cadeia == ''){
+        alert('Selecione Tema e Cadeia para visualizar as informações.');
+        return;
+    }   
+
+    let pagina = "buscar_dados_cadeias";
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: pagina,
+        beforeSend: function () {
+            document.getElementById('btnModalCadastroCadeias').disabled = true;
+            $('#dados_cadeia_modal').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        data: {
+            txt_sel_assunto: txt_sel_assunto,
+            txt_sel_cadeia: txt_sel_cadeia
+        },
+        success: function (dadosJson){
+            let html = "";
+            if (dadosJson) {
+                dadosJson.forEach(dados => {
+                    html += `
+                    <div class='acima' style='width:45.5%;'>
+                        <label for='txt_sel_gerencia'><strong>Gerência:</strong></label><br>
+                        <input type='text' value='${dados.gerencia}' id='txt_sel_gerencia' name='txt_sel_gerencia' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:45%;'>
+                        <label for='txt_sel_coordenacao'><strong>Coordenação:</strong></label><br>
+                        <input type='text' value='${dados.coordenacao}' id='txt_sel_coordenacao' name='txt_sel_coordenacao' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <br><br>
+                    <div class='acima' style='width:30%;'>
+                        <label for='txt_sel_tema'><strong>Tema:</strong></label><br>
+                        <input type='text' value='${dados.tema}' id='txt_sel_tema' name='txt_sel_tema' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:30%;'>
+                        <label for='txt_sel_temasub'><strong>Sub-Tema:</strong></label><br>
+                        <input type='text' value='${dados.subtema}' id='txt_sel_temasub' name='txt_sel_temasub' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:30%;'>
+                        <label for='txt_sel_produto_dados'><strong>Produto de Dados:</strong></label><br>
+                        <input type='text' value='${dados.produto_dados}' id='txt_sel_produto_dados' name='txt_sel_produto_dados' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <br><br>
+                    <div class='acima' style='width:30%;'>
+                        <label for='txt_sel_cadeia'><strong>Cadeia:</strong></label><br>
+                        <input type='text' value='${dados.cadeia}' id='txt_sel_cadeia' name='txt_sel_cadeia' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:15%;'>
+                        <label for='txt_sel_tipo_cadeia'><strong>Tipo Cadeia:</strong></label><br>
+                        <input type='text' value='${dados.tipo_cadeia}' id='txt_sel_tipo_cadeia' name='txt_sel_tipo_cadeia' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:15%;'>
+                        <label for='txt_sel_origem'><strong>Sistema Origem:</strong></label><br>
+                        <input type='text' value='${dados.sis_origem}' id='txt_sel_origem' name='txt_sel_origem' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:15%;'>
+                        <label for='txt_sel_destino'><strong>Sistema Destino:</strong></label><br>
+                        <input type='text' value='${dados.sis_destino}' id='txt_sel_destino' name='txt_sel_destino' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <br>
+                    <br>
+                    <div class='acima' style='width:14.7%;'>
+                        <label for='txt_sel_dataset'><strong>Dataset GCP:</strong></label><br>
+                        <input type='text' value='${dados.dataset_gcp}' id='txt_sel_dataset' name='txt_sel_dataset' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:14.7%;'>
+                        <label for='txt_sel_cod_gcp'><strong>Chave GCP:</strong></label><br>
+                        <input type='text' value='${dados.chave_gcp}' id='txt_sel_cod_gcp' name='txt_sel_cod_gcp' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:14.7%;'>
+                        <label for='txt_recorrencia'><strong>Recorrência:</strong></label><br>
+                        <input type='text' value='${dados.num_repeticoes}' id='txt_recorrencia' name='txt_recorrencia' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:14.7%;'>
+                        <label for='txt_tempo_entre_rep'><strong>Tempo intre rep.:</strong></label><br>
+                        <input type='text' value='${dados.tempo_entre_repeticoes}' id='txt_tempo_entre_rep' name='txt_tempo_entre_rep' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:30%;'>
+                        <label for='txt_criador_cadeia'><strong>Cadastrado por:</strong></label><br>
+                        <input type='text' value='${dados.usuario} - ${dados.nome}' id='txt_criador_cadeia' name='txt_criador_cadeia' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <br><br>
+                    <div class='acima' style='width:12%;'>
+                        <label for='txt_data_cadastro'><strong>Data Cadastro:</strong></label><br>
+                        <input type='text' value='${dados.dt_registro}' id='txt_data_cadastro' name='txt_data_cadastro' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <div class='acima' style='width:30%;'>
+                        <label for='txt_nivel_monitor'><strong>Monitoria:</strong></label><br>
+                        <input type='text' value='${dados.nivel_monitor_exec}' id='txt_nivel_monitor' name='txt_nivel_monitor' required class='txt' style='width:97%' readonly>
+                    </div>
+                    <br><br>`;
+                    });
+            } else {
+                const dados = dadosJson;
+                html += `Vazio...`;
+            }
+            $('#dados_cadeia_modal').html(html);
+            document.getElementById('btnModalCadastroCadeias').disabled = false;                
+        },error: function (xhr, status, error) {
+            $('#dados_cadeia_modal').html('Erro ao processar a requisição.'); 
+            console.error("Erro acesso aos dados:", status, error);
+        } 
+    })
+    document.getElementById('btRemover').disabled = false;    
+    document.getElementById('modalCadastroCadeia').style.display = 'block';
+};
+
+
+function fechar_dados_cadeia(){
+    document.getElementById('modalCadastroCadeia').style.display = 'none';
+};
+</script>
+

@@ -1,0 +1,253 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modal_historico.css') }}" type="text/css"/>
+
+<style>
+.btn_remover_va{
+  width: 50px;
+  height: 25px;
+  font-size: 9px; 
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e74c3c;
+  color: white; 
+}
+.btn_remover_va:hover {
+  background-color: white;
+  color: #152FE8;
+  font-weight: bold;
+  font-size: 9px; 
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+</style>
+
+<a id='abrirModalVA' href='#formVA'></a>
+
+<div id="formVA" class="modalDialog">
+    <div>
+        <a href="#close" title="Fechar" class="closeModal"></a>
+        <br><br>
+        <center>
+            <b><font size="3px">Variáveis de Ambiente para a Tarefa:</font>&nbsp;<font size="3px" color="#1a75ff"><span id='numero_pesquisado_va'></span></font></b>
+        </center>
+        <br>
+
+        <div id='modal_variaveis_ambiente' style='width:100%; height:85%; overflow:auto;'>
+            <br><br><div id='modal_variaveis_ambiente_tabela'></div>
+            <table borde='1' id='tbl_94' class='tabela'>
+                <thead>
+                    <tr>
+                        <td><strong>Chave</strong></td>
+                        <td><strong>Valor</strong></td>
+                        <td><strong>Ação</strong></td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>                  
+            </table> 
+            
+            <br>
+            <button class='bt' id='addRowBtn' onclick='addRow()'> Adicionar </button>
+            <button class='bt' id='saveTableBtn' onclick='salvar_tabela_variaveis_ambiente();'> Salvar </button>     
+            <br>
+            <br>
+            <label id='recebe_gif_processando_va'></label>        
+        </div>                   
+    </div>
+
+</div>
+
+<script>
+
+function salvar_tabela_variaveis_ambiente() {
+    texto_digitado = prompt("Para salvar alterações em variáveis de ambiente é necessário escrever exatamente a palavra Salvar: "); 
+    if (texto_digitado !== 'Salvar') {alert('FALHA:\n\nO texto digitado NÃO está correto!');return;}
+
+    const tabela = document.getElementById('tbl_94');
+    let id_tarefa = document.getElementById('numero_pesquisado_va');
+    const corpo = tabela.querySelector('tbody');
+    let lista_nome_variavel = [];
+    let lista_valor_variavel = [];
+    let lista_acao_variavel = [];
+    let salvar = 0;
+    for (let linha of corpo.children) {
+        let celulas = linha.querySelectorAll('td');
+        if(String(celulas[0].textContent).trim() !== '' && String(celulas[0].textContent).trim() !== '[NOME]' && String(celulas[1].textContent).trim() !== '' && String(celulas[1].textContent).trim() !== '[VALOR]'){
+            lista_nome_variavel.push(btoa(String(celulas[0].textContent).trim()));
+            lista_valor_variavel.push(btoa(String(celulas[1].textContent).trim()));
+            if(String(celulas[1].textContent).trim() == '***[PROTEGIDO]***'){
+                lista_acao_variavel.push('m');
+            }else{
+                lista_acao_variavel.push('n');
+            }
+
+        }else{
+            alert('Dados inconsistentes na solicitação!');
+            return;
+        }
+    }
+    let pagina = "salvar_variaveis_ambiente";
+    $.ajax({
+        url: pagina,
+        type: 'GET',
+        dataType: 'text',
+        beforeSend: function () {
+            $('#recebe_gif_processando_va').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        complete() {
+            $('#recebe_gif_processando_va').empty();
+        },
+        data: {
+            lista_nome_variavel: lista_nome_variavel,
+            lista_valor_variavel: lista_valor_variavel,
+            lista_acao_variavel: lista_acao_variavel,
+            id_tarefa: id_tarefa.textContent
+        },
+        success: function (response, textStatus, jqXHR){  
+            alert(response);        
+        },
+        error: function(xhr, status, errorThrown){
+            var errorMessage = xhr.status + ': ' + xhr.statusText;
+            console.error('Erro ao processar a requisição:', errorMessage);
+            alert(`Erro ao processar a requisição: ${errorMessage}`)                
+        }        
+    })   
+}
+
+function funcao_chamar_modal_variaveis_ambiente(txt_num_tarefa){
+    if(!txt_num_tarefa) {alert('FALHA: NÃO RECEBEU O ID DA TAREFA!');return;}    
+    if(txt_num_tarefa == ''){alert('FALHA: NÃO RECEBEU O ID DA TAREFA!');return;};
+
+    document.getElementById('numero_pesquisado_va').innerHTML = txt_num_tarefa;
+
+    let pagina = "lista_variaveis_ambiente_tarefa";
+    $.ajax({
+    method: 'GET',
+    dataType: 'json',
+    url: pagina,
+    beforeSend: function () {
+        $('#modal_variaveis_ambiente_tabela').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+    },
+    data: {
+        id_tarefa: txt_num_tarefa   
+    },
+    success: function (dados){
+        $('#modal_variaveis_ambiente_tabela').html("");
+        const $tbody = $('#tbl_94 tbody').empty();
+        
+        if (Array.isArray(dados) && dados.length > 0) {
+
+                dados.forEach(item => {
+                const $tr = $('<tr>').css('font-size', '10px');
+
+                $('<td>')
+                    .attr('contenteditable', true)
+                    .text(item.chave)
+                    .appendTo($tr);
+
+                $('<td>')
+                    .attr('contenteditable', true)
+                    .text(item.valor)
+                    .appendTo($tr);
+
+                const $btn = $('<button>', {
+                    class: 'btn_remover_va',
+                    text: 'Apagar'
+                }).on('click', function() {
+                    removeRow(this);
+                });
+
+                $('<td>').append($btn).appendTo($tr);
+                $tbody.append($tr);
+
+            });
+        } 
+
+    },error: function(xhr, status, error) {
+            $('#modal_variaveis_ambiente_tabela').html("");
+            var errorMessage = xhr.status + ': ' + xhr.statusText;
+            console.error('Erro ao processar a requisição:', errorMessage);
+            alert(`Erro ao processar a requisição: ${errorMessage}`)
+        }        
+})
+    document.getElementById('abrirModalVA').click();
+};
+
+
+
+
+
+function removeRow(button) {
+    const row = button.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+}
+
+function addRemoveButton(cell) {
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'btn_remover_va';
+    removeBtn.textContent = 'Apagar';
+    removeBtn.setAttribute('onclick', 'removeRow(this)');
+    cell.appendChild(removeBtn);
+}
+
+function makeCellEditable(cell) {
+    cell.addEventListener('click', () => enableEditing(cell));
+    cell.addEventListener('blur', () => disableEditing(cell));
+    cell.addEventListener('keypress', event => {
+        if (event.key === 'Enter') cell.blur();
+    });
+}    
+
+function validateUniqueColumn1(cell) {
+    const table = document.getElementById('tbl_94');
+    const tableBody = table.querySelector('tbody');
+    const cells = tableBody.querySelectorAll('tr td:first-child');
+    const currentValue = cell.textContent.trim();
+    let duplicate = false;
+
+    cells.forEach(existingCell => {
+        if (existingCell !== cell && existingCell.textContent.trim() === currentValue && existingCell.textContent.trim() !== '[NOME]') {
+            duplicate = true;
+        }
+    });
+
+    if (duplicate) {
+        alert('Este valor já existe na coluna 1. Por favor, insira um valor único.');
+        cell.textContent = '[NOME]';
+        cell.focus();
+    }
+}
+
+function addRow() {
+    const table = document.getElementById('tbl_94');
+    const tableBody = table.querySelector('tbody');
+    const newRow = document.createElement('tr');
+
+    const newCell1 = document.createElement('td');
+    newCell1.className = 'editar';
+    newCell1.textContent = '[NOME]';
+    newCell1.setAttribute('contenteditable', 'true');
+    newCell1.setAttribute('onfocusout', 'validateUniqueColumn1(this)');
+    newRow.appendChild(newCell1);
+
+    const newCell2 = document.createElement('td');
+    newCell2.className = 'editar';
+    newCell2.textContent = '[VALOR]';
+    newCell2.setAttribute('contenteditable', 'true');
+    newRow.appendChild(newCell2);
+
+    const newCell3 = document.createElement('td');
+    addRemoveButton(newCell3);
+    newRow.appendChild(newCell3);
+
+    tableBody.appendChild(newRow);
+}
+
+</script>
+
+</script>

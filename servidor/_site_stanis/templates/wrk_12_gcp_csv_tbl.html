@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+    <title>Stanis - Executar Proc. GCP</title>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+        <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+        <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/wrk_12_gcp_csv_tbl.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/consulta_status_linha.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/componentes/botoes.js') }}"></script>        
+    </head>
+    <body>
+        {% include 'header.html' %}
+        {% include 'modal_historico.html' %}
+        {% include 'button_scroll_up.html' %}
+
+        <script>
+            // pagina alteracao
+            const pagina = 'salvar_alteracao_gcp_csv_tbl';
+        
+            // informa os elementos necessários de criar para a tela de alteração.
+            const novos_elementos = [
+            { id: '_txt_bucket_dir', type: 'text', label: 'Local Bucket', width: '33.7%', attrs: { required: true, maxlength: 300, style: 'width:98.5%' } },
+            { id: '_txt_tabela_destino', type: 'text', label: 'Dataset.Tabela_Destino', width: '33.7%', attrs: { required: true, maxlength: 300, style: 'width:98.5%' } },
+            { id: '_txt_ini_arq', type: 'text', label: 'Inicio Arq.', width: '15%', attrs: { required: true, maxlength: 150, style: 'width:98.5%' } },
+            { id: '_txt_seperador', type: 'text', label: 'Separador', width: '15%', attrs: { required: true, maxlength: 1, style: 'width:98.5%' } },
+            { id: '_txt_lista_header', type: 'text', label: 'Cols. Cabeçalho', width: '49.5%', attrs: { required: true, maxlength: 5000, style: 'width:98.5%' } },
+            { id: '_txt_lista_validar_duplicidade', type: 'text', label: 'Cols. Valid. Duplicidade', width: '49.5%', attrs: { required: false, maxlength: 5000, style: 'width:98.5%' } },
+            { id: '_txt_recriar_tabela', type: 'select', label: 'Recriar Tab.', width: '38%', attrs: { required: true, style: 'width:98.5%' }, options: [
+                { value: '0', text: 'Não' },
+                { value: '1', text: 'Sim' }
+                ]
+            },
+            { id: '_txt_linha_cabecalho', type: 'number', label: 'Linha H.', min:"0", max:"999", width: '20%', attrs: { required: true, maxlength: 5000, style: 'width:98.5%' } }    ];  
+        
+        </script>
+
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+</div>    	
+        <form method="post" name="form">
+        <br>
+        <div class='_ler_arq_csv_do_bucket_para_tabela'>
+            {% include 'wrk_00_modal_alteracao_2.html' %}           
+            <br>
+            <div class='acima' style='width:35%;'>
+                <label for='txt_bucket_dir'><strong>Local Bucket:</strong></label><br>
+                <input title='Inicie o endereço a partir do diretório "in", exemplo: "in/subpasta/"' 
+                       type='text' id='txt_bucket_dir'
+                       name='txt_bucket_dir' 
+                       required 
+                       maxlength='300' 
+                       class='txt' 
+                       style='width:97%'
+                />
+            </div>
+            <div class='acima' style='width:35%;'>
+                <label for='txt_tabela_destino'><strong>Dataset.Tabela_Destino:</strong></label><br>
+                <input title='Informe o endereço da tabela de destino DATASET.TABELA' 
+                       type='text' 
+                       id='txt_tabela_destino' 
+                       name='txt_tabela_destino' 
+                       required 
+                       maxlength='300' 
+                       class='txt' 
+                       style='width:97%'
+                />
+            </div>            
+            <div class='acima' style='width:15%;'>
+                <label for='txt_ini_arq'><strong>Inicio do arquivo:</strong></label><br>
+                <input title='Informe o inicio do arquivo a ser procurado' 
+                       type='text' 
+                       id='txt_ini_arq' 
+                       name='txt_ini_arq' 
+                       required 
+                       maxlength='300' 
+                       class='txt' 
+                       style='width:97%'
+                />
+            </div>
+
+            <div class='acima' style='width:10%;'>
+                <label for='txt_seperador'><strong>Separador:</strong></label><br>
+                <input title='Informe um caractere para ser considerado o separador do arquivo csv"' 
+                       type='text' 
+                       id='txt_seperador'
+                       name='txt_seperador' 
+                       required 
+                       maxlength='1' 
+                       class='txt' 
+                       style='width:97%'
+                />
+            </div><br><br>            
+            
+            <div class='acima' style='width:35%;'>
+                <label for='txt_lista_header'><strong>Colunas do Cabeçalho:</strong></label><br>
+                <input title='Liste as colunas do cabeçalho para criar a tabela. Não use acentos ou caracteres especiais. Separe as colunas apenas por ponto e virgula.' 
+                       type='text'
+                       id='txt_lista_header'
+                       name='txt_lista_header'
+                       required maxlength='4500'
+                       class='txt'
+                       style='width:97%'
+                />
+            </div>   
+
+            <div class='acima' style='width:35%;'>
+                <label for='txt_lista_validar_duplicidade'><strong>Colunas Para Evitar Duplicidade:</strong></label><br>
+                <input title='Neste campo você informa uma ou mais colunas onde o sistema deve cruzar com a tabela já existe para evitar que a carga seja duplicada. Descreva as colunas, se necessário, sob as mesmas regras do item anterior: Liste as colunas do cabeçalho para criar a tabela. Não use acentos ou caracteres especiais. Separe as colunas apenas por ponto e virgula.' 
+                       type='text' 
+                       id='txt_lista_validar_duplicidade' 
+                       name='txt_lista_validar_duplicidade' 
+                       required maxlength='3000' 
+                       class='txt' 
+                       style='width:97%'
+                />
+            </div> 
+
+            <div class='acima' style='width:15%;'>
+                <label for='txt_recriar_tabela'><strong>Recriar Tabela:</strong></label><br>
+                <select id='txt_recriar_tabela' name='txt_recriar_tabela' required class='txt' style='width:100%' title='Neste campo você informa se o sistema deve recriar a tabela para cada arquivo lido. Se você informar "Não", todos os arquivo serão empilhados dentro da mesma tabela. Ao informar "Sim", você terá apenas o ultimo arquivo lido ao final do processo na tabela.'>
+                    <option value='0'>Não</option>
+                    <option value='1'>Sim</option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_linha_cabecalho'><strong>Linha Inicio Dados:</strong></label><br>
+                <input 
+					type='number' 
+					id='txt_linha_cabecalho' 
+					name='txt_linha_cabecalho' 
+					min='0' 
+					max='9999' 
+					value='0' 
+					onkeyup="if(value<0 || value>9999) value='1';" 
+					maxlength='4' 
+					class='txt' 
+					style='width:97%' 
+					title='Neste campo você informa a linha que o sistema deve considerar como a primeira linha que contém os dados depois do cabeçalho, se o arquivo não tiver cabeçalho informe 0 (zero).'
+				/>                                                   
+            </div><br><br>
+
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_hr_exe'><strong>Hora Execução:</strong></label><br>
+                <input type='time' id='txt_hr_exe' name='txt_hr_exe' min="00:01" max="23:00"  required class='txt' style='width:97%'/>   <!-- onkeyup="value='';" -->                                                
+            </div>
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_hr_limit'><strong>Hora Limite:</strong></label><br>
+                <input type='time' id='txt_hr_limit' name='txt_hr_limit' min="00:02" max="23:59" required class='txt' style='width:97%'/> <!-- onkeyup="value='';" -->                                                    
+            </div>
+
+            <div class='acima' style='width:15%;'>
+                <label for='txt_recorrencia'><strong>Recorrencia:</strong></label><br>
+                <select id='txt_recorrencia' name='txt_recorrencia' required class='txt' style='width:97%' onchange="funcao_frequencia();">
+                    <option value='1'>Diaria</option>
+                    <option value='2'>Seg-Sex</option>
+                    <option value='3'>Mensal</option>
+                    <option value='4'>Semanal</option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_dia_mes' id='txt_label_dia_mes'><strong>Dia:</strong></label><br>
+                <input disabled type='number' id='txt_dia_mes' name='txt_dia_mes' min='1' max='31' value='' onkeyup="if(value<0 || value>31) value='';" maxlength='2' class='txt' style='width:97%'/>                                                   
+            </div>
+
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_depend_tar'><strong>Depende da Tarefa:</strong></label><br>
+                <input type='text' id='txt_depend_tar' name='txt_depend_tar' value='' onkeypress="return filtroTeclas(event);" maxlength='50' class='txt' style='width:97%'/>                                                   
+            </div>
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_id_chat'><strong>Chat:</strong></label><br>
+                <select id='txt_id_chat' name='txt_id_chat' required class='txt' style='width:99%'>
+                    <option value=''></option>
+                    {% for chat in chats %}
+                        <option value="{{ chat['codigo'] }}">{{ chat['nome_grupo'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class='acima' style='width:20%;'>    
+                <label for='txt_descicao_tar'><strong>Nome Tarefa:</strong></label><br>
+                <input type='text' id='txt_descicao_tar' name='txt_descicao_tar' maxlength='100' required class='txt' style='width:97%'/>                                                   
+            </div>
+            <div class='acima' style='width:8.5%;'>    
+                <label for='txt_work_fixo'><strong>Worker:</strong></label><br>
+                <input type='number' id='txt_work_fixo' name='txt_work_fixo' min='0' max='9999' value='0' onkeyup="if(value<0 || value>9999) value='';" maxlength='4' class='txt' style='width:100%'/>                                                   
+            </div>
+            <br><br>
+			<div class='acima' style='width:12%;'>    
+                <label for='txt_host_fixo'><strong>Host Fixo:</strong></label><br>                                                  
+                <select id='txt_host_fixo' name='txt_host_fixo' required class='txt' style='width:97%' title = 'Só informe um Host Fixo se for obrigatório a tarefa rodar nesta maquina.'>
+                    <option value='0'>Livre</option>
+                    {% for host in hosts %}
+                        <option value="{{ host['nome_maquina'] }}">{{ host['nome_maquina'] }}</option>
+                    {% endfor %}
+                </select>            
+            </div>            
+            <br><br> 
+            <div class='acima' style='width:34.5%;'>    
+                <label for='txt_obs_tar'><strong>Doc:</strong></label><br>
+                <textarea title='Este campo, no momento, não é obrigatório, mas é uma boa prática de controle de atividades descrever o que será executado neste processo.' id='txt_obs_tar' name='txt_obs_tar' value="" maxlength='4000' cols="150" rows="2" class='txt' style='width:100%'></textarea>                                               
+            </div>
+            <br>
+            <br>            
+            {% if perfil == '1' %}     
+                <input type="button" value="Criar" onclick="funcao_valida_salvamento_tarefa_ler_arq_uri()" class="bt" name="btSalvar" id="btSalvar"/>
+            {% endif %} 
+            <br>
+            {% include 'filtro_simples_tabela.html' %}
+
+            <label id='recebe_gif_processando'></label> 
+            <br><br> 
+            <div id="conteiner-tabela"></div>
+            <br>
+            <input type="button" value="Exportar"  onclick="extrair_tabela_1();" class="bt" id="btExtrair1" name="btExtrair1"/>
+            <br><br>
+        </div>
+
+
+    </body>
+    <script>funcao_listar_tarefas_csv_table_gcp()</script>
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            var url = new URL(window.location.href);
+            var valor = url.searchParams.get("linha");
+
+            if (valor) {
+                var elementoInterval = setInterval(function () {
+                    var elemento = document.getElementById(valor);
+                    if (elemento) {
+                        clearInterval(elementoInterval);
+                        elemento.style.backgroundColor = "lightblue";
+                        elemento.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                }, 100);
+            }
+        });
+    </script>
+ 	<script>
+		function abrirGrafico(assunto, cadeia) {
+			var url = 'wrk_hierarquia?assunto=' + encodeURIComponent(assunto) + '&cadeia=' + encodeURIComponent(cadeia);
+			window.open(url, '_blank');
+		}
+	</script>
+</html>
+
+
+
+

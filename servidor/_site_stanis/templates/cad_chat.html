@@ -1,0 +1,218 @@
+<!doctype html>
+
+<html>
+    <title>Stanis - Cadeias</title>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+        <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+        <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    </head>
+    {% include 'header.html' %}
+    {% include 'button_scroll_up.html' %}
+    <body>
+
+<script>
+
+function salvarRegistro() {
+    let grupo = String(document.getElementById('txt_nome_grupo').value).trim()
+    let url = String(document.getElementById('txt_url_chat').value).trim()
+    let codigo = String(document.getElementById('txt_cod_grupo').value).trim()
+    let table = document.getElementById('tbl_1'); 
+    let rows = table.getElementsByTagName('tr');
+    
+    if (grupo.trim() === '' || url.trim() === '' || codigo.trim() === '') {
+        alert('Falta informações para realizar a ação!');
+        return false;
+    }
+
+    let numero = parseInt(codigo)
+
+    if (isNaN(numero)) {
+            alert("O código precisa ser um numero!")
+            return false
+    }
+    numero = Math.floor(numero)
+
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0 && cells[0].innerText.trim() === numero.toString()) {
+            alert("O código já existe na lista!")
+            return false;
+        }
+    }
+
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0 && cells[2].innerText.trim() === url.toString().trim()) {
+            alert("A URL já está cadastrada!")
+            return false;
+        }
+    }
+
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0 && cells[1].innerText.trim().toUpperCase() === grupo.toUpperCase().toString().trim()) {
+            alert("Este Nome Grupo já está em uso!")
+            return false;
+        }
+    }
+
+    
+    if(!confirm('ATENÇÃO!\n\nConfirma o cadastro do novo Chat?')){
+        return
+    }
+
+    let pagina = "cadastrar_chat_tela";
+    $.ajax({
+        type: 'GET',
+        dataType: 'text',
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: {
+            grupo: grupo,
+            url: url,
+            codigo: codigo
+        },
+        success: function (dados){  
+            $('#recebe_gif_processando').html("");
+            alert(dados);
+            window.location.reload()            
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            console.error('Erro na requisição:', textStatus, errorThrown);
+            let mensagem = jqXHR.responseText || errorThrown;
+            alert(mensagem);
+        }     
+    });   
+}
+
+
+
+
+function removerRegistro() {
+    let codigo = document.getElementById('txt_cod_grupo').value
+    let table = document.getElementById('tbl_1'); 
+    let rows = table.getElementsByTagName('tr');
+    
+    let numero = parseInt(codigo)
+
+    if (isNaN(numero)) {
+            alert("O código precisa ser um numero!")
+            return false
+    }
+
+    if(!confirm('ATENÇÃO!\n\nDeseja realmente excluir este Chat?\n\nEste código será desassociado de todas as tarefas, mesmo as cadastradas por outros usuários.\n\nEsta ação não poderá ser desfeita.')){
+        return
+    }    
+
+    numero = Math.floor(numero)
+    let bloq = false
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0 && cells[0].innerText.trim() === numero.toString()) {
+            bloq = true;
+        }
+    }
+    if(bloq == false){
+        alert('O registro não está cadastrado na lista.')
+        return
+    }
+
+    let pagina = "remover_chat_tela";
+    $.ajax({
+        type: 'GET',
+        dataType: 'text',
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: { codigo: codigo },
+        success: function (dados){  
+            alert(dados);
+            window.location.reload()            
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            console.error('Erro na requisição:', textStatus, errorThrown);
+            let mensagem = jqXHR.responseText || errorThrown;
+            alert(mensagem);
+        }        
+    });
+}
+
+
+</script>
+
+
+
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+    <span title = 'Mudar cor de fundo'>
+    <label id="vDark001" for="switch" style="position: absolute;top:3.3%;left: 97%"><strong>IA</strong></label></span>
+</div>
+
+        <form>
+        <br>
+        <div class='_cadastro_chat'>
+            <br>
+
+            <div class='acima'>
+                    <label for='txt_cod_grupo'><strong>Código:</strong></label><br>
+                    <input type='number' id='txt_cod_grupo' name='txt_cod_grupo' min='1' max='999' value='' onkeyup="if(value<1 || value>999) value='';" maxlength='3' class='txt' style='width:97%'/>
+            </div>&nbsp;&nbsp;
+
+            <div class='acima' style='width:10%'>
+                    <label for='txt_nome_grupo'><strong>Nome Grupo:</strong></label><br>
+                    <input type='text' id='txt_nome_grupo' name='txt_nome_grupo' maxlength='30' class='txt' style='width:97%'/>
+            </div>&nbsp;&nbsp;
+
+            <div class='acima' style='width:35%'>
+                    <label for='txt_url_chat'><strong>URL Webhoot:</strong></label><br>
+                    <input type='text' id='txt_url_chat' name='txt_url_chat' maxlength='200' class='txt' style='width:97%'/>
+            </div>&nbsp;&nbsp;
+            
+            <input type="button" value="Adicionar" onclick="salvarRegistro()" class="bt" name="btAdicionar" id="btAdicionar"/>
+            <input type="button" value="Remover" onclick="removerRegistro()" class="bt" name="btRemover" id="btRemover"/>
+
+            <br>
+            <br>            
+
+      
+                <table borde='1' id='tbl_1'>
+                <thead>
+                    <tr>
+                        <td><strong>Código</strong></td>
+                        <td><strong>Nome Grupo</strong></td>
+                        <td><strong>URL</strong></td>
+                    </tr>    
+                </thead>
+                    <tbody>
+                        {% for chat in chats %}
+                           <tr>
+                           <td><p style='font-size:9px'>{{ chat['codigo'] }}</p></td>
+                           <td><p style='font-size:9px'>{{ chat['nome_grupo'] }}</p></td>
+                           <td><p style='font-size:9px'>{{ chat['url_webhoot'] }}</p></td>
+                           </tr>
+
+                        {% endfor %}
+                    <tbody>
+                </table>
+                
+
+            <br>
+            <br>            
+
+            
+        </div>
+        <label id='recebe_gif_processando'></label> 
+    </body>
+
+</html>
+
+
+
+

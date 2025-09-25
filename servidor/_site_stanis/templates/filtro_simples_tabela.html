@@ -1,0 +1,62 @@
+<script>
+    function filtra_tab1() {
+        const input = document.getElementById('txtColuna0099');
+        const tabela = document.getElementById('tbl_1');
+        const valor = input.value.toUpperCase();
+        const rows = tabela.getElementsByTagName('tr');
+    
+        if (valor === '') {
+            for (let i = 1; i < rows.length; i++) {
+                rows[i].style.display = '';
+            }
+            return;
+        }
+    
+        let linhasEncontradas = [];
+        let subtopicosParaMostrar = new Set();
+    
+        // Encontrar todas as linhas onde o padrão é encontrado
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const cells = row.getElementsByTagName('td');
+    
+            for (let j = 0; j < cells.length; j++) {
+                const cell = cells[j];
+                const text = cell.textContent || cell.innerText || '';
+                if (text.toUpperCase().indexOf(valor) >= 0) {
+                    linhasEncontradas.push(i);
+                    break;
+                }
+            }
+        }
+    
+        // Encontrar os subtópicos imediatamente acima das linhas encontradas
+        for (const linha of linhasEncontradas) {
+            for (let i = linha - 1; i >= 1; i--) {
+                const row = rows[i];
+                const cells = row.getElementsByTagName('td');
+                if (cells.length === 1) {
+                    subtopicosParaMostrar.add(i);
+                    break;
+                }
+            }
+        }
+    
+        // Aplicar a lógica de exibição
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (linhasEncontradas.includes(i) || subtopicosParaMostrar.has(i)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+    
+    </script>
+    
+    <br><br>
+    <div class='acima' style='width:25%;'>
+        <label for='txtColuna0099'><strong>Localizar:</strong></label><br>
+        <input type='text' id='txtColuna0099' name='txtColuna0099' onkeyup='filtra_tab1();' maxlength='150' class='txt' style='width:97%'/>
+    </div>

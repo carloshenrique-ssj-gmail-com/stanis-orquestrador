@@ -1,0 +1,444 @@
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: var(--bg2);
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        max-width: 850px;
+        height: 400px;
+        bottom: 0;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+
+ .arq_desc{
+    max-width: 5px;
+    max-height: 5px;
+    overflow: hidden;
+    background: #F2F4F4;
+    color: black;
+    border-left: 2px solid #EAEDED;
+    padding: 2px 2px;
+}
+
+#elementos_alt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;        
+  align-items: flex-start;
+}
+#elementos_alt #btAlterar {
+  order: 9999;
+  flex-basis: 100%; 
+}
+</style>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: var(--bg2);
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        max-width: 850px;
+        height: 400px;
+        bottom: 0;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    }
+
+ .arq_desc{
+    max-width: 10px;
+    max-height: 10px;
+    overflow: hidden;
+    background: #F2F4F4;
+    color: black;
+    border-left: 2px solid #EAEDED;
+    padding: 2px 2px;
+}
+</style>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close">×</span>
+    <br>
+    <form id="alterarTarefaForm">
+        <img src="{{ url_for('static', filename='images/static_img/icones/alterar.png') }}" alt="Alterar Tarefa">
+        <div id="conteudoDivModal" style="margin: auto;text-align: center;align-items: center;">
+            <input type='text' id='_id' name='_id' value='9999' class='txt' disabled style='text-align:center;'/>
+        </div>
+        <!--- A PARTIR DAQUI -->
+        <br>
+        <div id="elementos_alt">
+
+                <div class='acima' style='width:20%; display: inline-block;'>
+                    <label for='_txt_hr_exe'><strong>Hora Execução:</strong></label><br>
+                    <input type='time' id='_txt_hr_exe' name='_txt_hr_exe' min="00:01" max="23:00" required class='txt' style='width:97%'/>
+                </div>
+                <div class='acima' style='width:20%; display: inline-block;'>
+                    <label for='_txt_hr_limit'><strong>Hora Limite:</strong></label><br>
+                    <input type='time' id='_txt_hr_limit' name='_txt_hr_limit' min="00:02" max="23:59" required class='txt' style='width:97%'/>
+                </div>
+
+                <div class='acima' style='width:26%; display: inline-block;'>
+                    <label for='_txt_recorrencia'><strong>Recorrencia:</strong></label><br>
+                    <select id='_txt_recorrencia' name='_txt_recorrencia' required class='txt' style='width:100%' onchange="funcao_frequencia2();">
+                        <option value='1'>Diaria</option>
+                        <option value='2'>Seg-Sex</option>
+                        <option value='3'>Mensal</option>
+                        <option value='4'>Semanal</option>
+                    </select>
+                </div>
+
+                <div class='acima' style='width:10%; display: inline-block;'>
+                    <label for='_txt_dia_mes' id='_txt_label_dia_mes'><strong>Dia:</strong></label><br>
+                    <input disabled type='number' id='_txt_dia_mes' name='_txt_dia_mes' min='1' max='31' value='' onkeyup="if(value<0 || value>31) value='';" maxlength='2' class='txt' style='width:90%'/>
+                </div>
+
+                <div class='acima' style='width:20%; display: inline-block;'>
+                    <label for='_txt_depend_tar'><strong>Depende da Tarefa:</strong></label><br>
+                    <input type='text' id='_txt_depend_tar' name='_txt_depend_tar' value='' onkeypress="return filtroTeclas(event);" maxlength='50' class='txt' style='width:97%'/>
+                </div>
+
+                <div class='acima' style='width:15%; display: inline-block;'>
+                    <label for='_txt_id_chat'><strong>Id Chat:</strong></label><br>
+                    <select id='_txt_id_chat' name='_txt_id_chat' required class='txt' style='width:97%'>
+                    <option value=''></option>
+                    {% for chat in chats %}
+                      <option value="{{ chat['codigo'] }}">{{ chat['nome_grupo'] }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+
+                <div class='acima' style='width:45%; display: inline-block;'>
+                    <label for='_txt_descicao_tar'><strong>Nome Tarefa:</strong></label><br>
+                    <input type='text' id='_txt_descicao_tar' name='_txt_descicao_tar' maxlength='100' required class='txt' style='width:98%'/>
+                </div>
+
+                <div class='acima' style='width: 15%; display: inline-block;'>
+                    <label for='_txt_work_fixo'><strong>Worker:</strong></label><br>
+                    <input type='number' id='_txt_work_fixo' name='_txt_work_fixo' min='0' max='9999' value='0' onkeyup="if(value<0 || value>9999) value='';" maxlength='7' class='txt' style='width:97%'/>
+                </div>
+
+                <div class='acima' style='width:22%; display: inline-block;'>
+                    <label for='_txt_host_fixo'><strong>Host Fixo:</strong></label><br>
+                    <select id='_txt_host_fixo' name='_txt_host_fixo' required class='txt' style='width:100%'>
+                    <option value='0'>Livre</option>
+                    {% for host in hosts %}
+                      <option value="{{ host['nome_maquina'] }}">{{ host['nome_maquina'] }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+
+                <div class='acima' style='width:98%;'>
+                    <label for='_txt_obs_tar'><strong>Doc:</strong></label><br>
+                    <textarea title='Este campo, no momento, não é obrigatório, mas é uma boa prática de controle de atividades descrever o que será executado neste processo.' id='_txt_obs_tar' name='_txt_obs_tar' value="" maxlength='4000' cols="150" rows="2" class='txt' style='width:100%'></textarea>
+                </div>
+
+                
+                <div class='acima' style='width: 15%; display: inline-block;'>
+                    <label for='_usuario'><strong>Responsável:</strong></label><br>
+                    <input type='text' id='_usuario' name='_usuario' maxlength='8' class='txt' style='width:95%'/>
+                </div>
+                <br>
+
+                <input type="button" style="background-color: #9b59b6;" value="Alterar" class="bt" name="btAlterar" id="btAlterar" onclick="salvar_alteracao_n()"/><br>
+
+                
+            </div>
+            <br><br>
+            <div id="mensagem_envio"></div>
+            <!-- ATÉ AQUI -->
+    </form>
+    <br>
+  </div>
+</div>
+
+<script>
+
+const closeModalBtn = document.querySelector(".close");
+const modal = document.getElementById("modal");
+closeModalBtn.onclick = function() {
+  modal.style.display = "none";
+}
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+
+function addElementosDiv(containerId, dynamicList) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  dynamicList.slice().reverse().forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'acima';
+    Object.assign(div.style, { width: f.width, display: 'inline-block' });
+    const label = document.createElement('label');
+    label.htmlFor = f.id;
+    label.innerHTML = `<strong>${f.label}:</strong>`;
+    const br = document.createElement('br');
+
+    let input;
+    if (f.type === 'select') {
+      input = document.createElement('select');
+      (f.options || []).forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.value;
+        opt.textContent = o.text;
+        input.append(opt);
+      });
+    } else if (f.type === 'textarea') {
+      input = document.createElement('textarea');
+      if (f.rows) input.rows = f.rows;
+      if (f.cols) input.cols = f.cols;
+    } else {
+      input = document.createElement('input');
+      input.type = f.type;
+    }
+
+    input.id = f.id;
+    input.name = f.id;
+    input.className = 'txt';
+    Object.entries(f.attrs || {}).forEach(([k, v]) => input.setAttribute(k, v));
+    div.append(label, br, input);
+    container.insertBefore(div, container.firstChild);
+  });
+}
+addElementosDiv('elementos_alt', novos_elementos);
+
+
+function tela_alteracao(idTar, tela) {
+  const tabela = document.getElementById('tbl_1');
+  for (const row of tabela.rows) {
+    if (row.cells[0].innerText.trim() === String(idTar)) {
+      // monta o objeto de posições
+      const posicoesDaLinha = { rowIndex: row.rowIndex, campos: {} };
+
+      mappings.forEach(({ col, idElemento }) => {
+        posicoesDaLinha.campos[idElemento] = col;  
+        const el = document.getElementById(idElemento);
+        if (!el) return;
+
+        const texto = row.cells[col]?.innerText.trim() ?? '';
+        const textoLower = texto.toLowerCase();
+
+        if (el instanceof HTMLSelectElement) {
+          const opcao = Array.from(el.options)
+            .find(o =>
+              o.value.toLowerCase() === textoLower ||
+              o.text.trim().toLowerCase() === textoLower
+            );
+          if (opcao) el.value = opcao.value;
+          else el.selectedIndex = -1;
+
+        } else if (el instanceof HTMLTextAreaElement) {
+          el.value = texto;
+
+        } else if (el instanceof HTMLInputElement) {
+          switch (el.type) {
+            case 'text':
+              el.value = texto;
+              break;
+            case 'number':
+              const num = parseFloat(texto.replace(',', '.'));
+              if (!isNaN(num)) el.valueAsNumber = num;
+              else el.value = '';
+              break;
+            case 'time':
+              el.value = texto;
+              break;
+            default:
+              el.value = texto;
+          }
+        }
+      });
+
+      // salva para uso posterior
+      window.posicoesDaLinha = posicoesDaLinha;
+
+      const idInput = document.getElementById('_id');
+      if (idInput) idInput.value = idTar;
+      const modal = document.getElementById('modal');
+      if (modal) modal.style.display = 'block';
+      return;
+    }
+  }
+}
+
+
+function salvar_alteracao_n() {
+
+  if (!confirm("Confirma a alteração da tarefa?")) return;
+
+  // obtem valores de todos os campos
+  const data_obj = {};
+  colunas_validar.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data_obj[id] = el.value.trim();
+  });
+
+  // validações básicas
+  if (!data_obj._id || data_obj._id === '9999') {
+    alert('ID da tarefa inválido.');
+    return;
+  }
+
+  for (const id of obrigatorios) {
+    if (!data_obj[id]) {
+      alert('Falta informação para alterar a tarefa!');
+      return;
+    }
+  }
+
+  if (data_obj._txt_depend_tar && !valida_padrao_dependencia(data_obj._txt_depend_tar)) {
+    alert('Formato do Id de dependência inválido.');
+    return;
+  }
+
+  // AJAX de envio
+  const $btn = $('#btAlterar');
+  $.ajax({
+    type: 'GET',
+    url: pagina,
+    dataType: 'text',
+    contentType: 'application/json',
+    data: {dados :JSON.stringify(data_obj)},
+    beforeSend() {
+      $btn.prop('disabled', true);
+      $('#mensagem_envio').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+    },
+    success(msg, textStatus, jqXHR) {
+
+      const statusCode = jqXHR.status;
+      const resposta = jqXHR.responseText || errorThrown;
+
+      if (statusCode === 200) {
+        alert(resposta);
+      // —— ATUALIZAÇÃO DA TABELA —— //
+      const pos = window.posicoesDaLinha;
+      if (pos) {
+        const tabela = document.getElementById('tbl_1');
+        const row    = tabela.rows[pos.rowIndex];
+
+        Object.entries(pos.campos).forEach(([idElemento, colIndex]) => {
+          const el       = document.getElementById(idElemento);
+          let novoTexto  = data_obj[idElemento] ?? '';
+
+          // se for select, pega o texto da opção selecionada
+          if (el instanceof HTMLSelectElement) {
+            const opc = el.options[el.selectedIndex];
+            novoTexto = opc ? opc.text.trim() : '';
+          }
+
+          const cell = row.cells[colIndex];
+
+          // preserva a formatação
+          // atualiza só o textContent dele; caso contrário, atualiza o próprio cell
+          if (cell.children.length === 1 && cell.firstElementChild instanceof HTMLElement) {
+            cell.firstElementChild.textContent = novoTexto;
+          } else {
+            cell.textContent = novoTexto;
+          }
+        });
+      }
+        // —— FIM ATUALIZAÇÃO DA TABELA —— //       
+        $btn.prop('disabled', false);    
+      } else if (statusCode === 400) {
+        alert(resposta);
+      } else {
+        alert(`Retorno NÃO esperado (HTTP ${statusCode} - ${resposta}).`);
+      }      
+      $('#mensagem_envio').empty();
+      $('.close').click();   
+      // opcional: window.location.reload();
+    },
+    error(xhr, status, erro) {
+      $btn.prop('disabled', false);
+      $('#mensagem_envio').empty();
+      alert("ERRO AO TENTAR ALTERAR TAREFA: " + erro);
+    }
+  });
+}
+
+
+
+function funcao_frequencia2(){
+    let txt_recorrencia = document.getElementById('_txt_recorrencia');
+    let txt_dia_mes = document.getElementById('_txt_dia_mes');
+
+    if(txt_recorrencia.value == '3')
+      {
+            txt_dia_mes.removeAttribute('disabled');
+            txt_dia_mes.value = '1';
+            document.getElementById('_txt_dia_mes').setAttribute('min', '1');
+            document.getElementById('_txt_dia_mes').setAttribute('max', '31');
+            document.getElementById('_txt_dia_mes').setAttribute('onkeyup', "if(value<1 || value>31) value='';");
+            return;
+
+      }else if(txt_recorrencia.value == '4')
+      {
+            txt_dia_mes.removeAttribute('disabled');
+            txt_dia_mes.value = '0';
+            document.getElementById('_txt_dia_mes').setAttribute('min', '0');
+            document.getElementById('_txt_dia_mes').setAttribute('max', '6');
+            document.getElementById('_txt_dia_mes').setAttribute('onkeyup', "if(value<0 || value>6) value='';");
+            return;
+      } else
+      {
+        txt_dia_mes.value = '';
+        txt_dia_mes.disabled = true;
+        return;
+      };
+};    
+</script>

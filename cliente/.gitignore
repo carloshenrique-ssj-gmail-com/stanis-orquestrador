@@ -1,0 +1,13 @@
+wrk_download_gcp/__pycache__/
+wrk_download_serv_sas/__pycache__/
+wrk_func_py_gatilho/__pycache__/
+wrk_local/__pycache__/
+wrk_procedure_gcp/__pycache__/
+wrk_script_py/__pycache__/
+wrk_script_sas/__pycache__/
+wrk_script_vba/__pycache__/
+wrk_script_vbs/__pycache__/
+wrk_upload_gcp/__pycache__/
+wrk_upload_serv_sas/__pycache__/
+wrk_csv_bucket_into_table/__pycache__/
+__pycache__/

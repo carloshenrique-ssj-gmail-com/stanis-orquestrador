@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt">
+<title>Stanis - Graf. Fluxo Trabalho</title> 
+  <head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css2.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vis-network.min.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/botoes.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/vis-network.min.js') }}"></script>
+    
+
+<style>
+/* Estilo básico para manter consistência */
+select, input[type="text"], input[type="date"], input[type="number"], button {
+    font-family: Arial, sans-serif; 
+    font-size: 14px; 
+    padding: 5px 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    background-color: #fff;
+    box-shadow: none;
+    outline: none; 
+    margin-right: 10px;
+}
+
+select:focus, input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, button:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+</style>
+
+</head>
+<body>
+    {% include 'header.html' %}
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+</div>
+
+<script>
+    
+
+function funcao_pesquisa_cadeia(){
+    
+    let assunto = document.getElementById("txt_sel_assunto").value;
+    if(assunto == '' || assunto.length == 0){return;};
+    const $selectCadeia = $('#txt_sel_cadeia');
+    let pagina = "lista_cadeias";
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+            $selectCadeia.prop('disabled', true);
+            $selectCadeia.empty();
+        },
+        data: {txt_sel_assunto: assunto},
+        success: function (data){
+            
+            $selectCadeia.append('<option value="">Selecione uma cadeia</option>');
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(item => {
+                $selectCadeia.append(
+                    `<option value="${item.cadeia}">${item.cadeia} - ${item.chave_cadeia}</option>`
+                );
+                });
+            } else {
+                $selectCadeia.append('<option value="">Nenhuma cadeia encontrada</option>');
+            }          
+        },
+        error(xhr, status, error) {
+            console.error('Erro ao carregar cadeias:', error);
+            alert('Não foi possível carregar as cadeias. Analise o log no console do navegador.');
+    },
+    complete() {
+      $selectCadeia.prop('disabled', false);
+      $('#recebe_gif_processando').html("");
+    }
+    })    
+};
+
+
+function forca_inicio(){
+    const txt_tarefa = document.getElementById("selected_id").value;
+    const tipo = document.getElementById("type_id").value;
+    if(txt_tarefa !== '' && tipo === 'ALTERAR'){
+        if(funcao_forcar_inicio_tarefa(txt_tarefa) === true){
+            fechar_modal_alt();
+        }
+    }else{
+        alert('\nFALHA\n\nNão é possivel solicitar o inicio de uma tarefa ainda não criada.')
+    }
+}
+
+// PESQUISA FLOW
+var cachedData = null;
+var network = null;
+
+function funcao_pesquisa_flow(mudanca_grafico=false) {
+    if (mudanca_grafico === true && cachedData === null) {
+        return;
+    }  
+
+    // Cria o gráfico
+    const ele_tipo = document.getElementById("txt_sel_tipo").value || "Hierarquia";
+    const ele_dire = document.getElementById("txt_sel_direcao").value || "LR";
+    const ele_dist = Number(document.getElementById("txt_sel_distancia").value) || 250;
+
+    
+    function formatarTextoDescricao(texto) {
+        texto = String(texto);
+        if (!texto) {
+            return '';
+        }
+        let tamanhoMaximo = 20;
+        let textoFormatado = '';
+
+        while (texto.length > tamanhoMaximo) {
+            textoFormatado += texto.substring(0, tamanhoMaximo) + "\n";
+            texto = texto.substring(tamanhoMaximo);
+        }
+
+        textoFormatado += texto;
+        return textoFormatado;
+    }
+
+    var nn = 0;
+    function random_color() {
+        if (nn > 6) {
+            nn = 0;
+        }
+        var colors = ["#80bfff", "#8cd9b3", "#a3c2c2", "#b3b3ff", "#d98cd9", "#00b3b3", "#d9e5f2"];
+        var cor = colors[nn];
+        nn += 1;
+        return cor;
+    }
+
+    function temPipe(str) {
+        return str.indexOf('|') !== -1;
+    }
+
+    function processGraphData(data) {
+        var tasks = [];
+        var edges = [];
+        var n_g = 0;
+        var cor = "";
+        var cadeia = "";
+        var assunto = "";
+        var vv = 0;
+
+        data.forEach(function(dados) {
+            var cad = dados['cadeia'];
+            var ass = dados['assunto'];
+            var stt = dados['stt'];
+            var ori = dados['origem'];
+
+            if (cadeia !== cad || assunto !== ass) {
+                n_g += 1;
+                if (assunto === '') {
+                    if (assunto !== ass) {
+                        cor = random_color();
+                    }
+                } else {
+                    cor = random_color();
+                }
+                cadeia = cad;
+                assunto = ass;
+
+                if (String(stt) === 'FALHA') {
+                    cor = '#F2080F';
+                }
+                if (ori == "1" || ori == "2") {v_cor = '#d5d8dc';}else{v_cor = cor};
+                tasks.push({ id: n_g, label: cad, shape: 'hexagon', color: v_cor });
+                vv = 1;
+            }
+
+            var id_tar = dados['id_tarefa'];
+            var tipo = dados['tipo'];
+            var id_dep = dados['id_dependencia'];
+            var desc = id_tar + '\n' + tipo + '\n' + formatarTextoDescricao(dados['descricao']);
+
+            if (ori == "1" || ori == "2") {v_cor = '#d5d8dc';}else{v_cor = cor};
+            
+            if (String(stt) === 'FALHA') {
+                tasks.push({ id: id_tar, label: desc, shape: 'box', color: '#F2080F', origem: ori });
+            } else {
+                tasks.push({ id: id_tar, label: desc, shape: 'box', color: v_cor, origem: ori });
+            }
+
+            if (id_dep && id_tar) {
+                if (String(stt) === 'SUCESSO') {
+                    if (temPipe(id_dep)) {
+                        var arr = id_dep.split('|');
+                        arr.forEach(function(value) {
+                            edges.push({ from: value, to: id_tar, arrows: 'to' });
+                        });
+                    } else {
+                        edges.push({ from: id_dep, to: id_tar, arrows: 'to' });
+                    }
+                } else if (String(stt) === 'FALHA') {
+                    if (temPipe(id_dep)) {
+                        var arr = id_dep.split('|');
+                        arr.forEach(function(value) {
+                            edges.push({ from: value, to: id_tar, arrows: 'to', dashes: true, label: 'FALHA', font: { align: 'middle' }, color: { color: cor } });
+                        });
+                    } else {
+                        edges.push({ from: id_dep, to: id_tar, arrows: 'to', dashes: true, label: 'FALHA', font: { align: 'middle' }, color: { color: cor } });
+                    }
+                } else if (String(stt) === 'AGUARDANDO') {
+                    if (temPipe(id_dep)) {
+                        var arr = id_dep.split('|');
+                        arr.forEach(function(value) {
+                            edges.push({ from: value, to: id_tar, arrows: 'to', dashes: true, label: 'Aguardando', font: { align: 'middle' } });
+                        });
+                    } else {
+                        edges.push({ from: id_dep, to: id_tar, arrows: 'to', dashes: true, label: 'Aguardando', font: { align: 'middle' } });
+                    }
+                } else if (String(stt) === 'NOVO') {
+                    if (temPipe(id_dep)) {
+                        var arr = id_dep.split('|');
+                        arr.forEach(function(value) {
+                            edges.push({ from: value, to: id_tar, arrows: 'to', dashes: true, label: 'Novo', font: { align: 'middle' } });
+                        });
+                    } else {
+                        edges.push({ from: id_dep, to: id_tar, arrows: 'to', dashes: true, label: 'Novo', font: { align: 'middle' } });
+                    }                    
+                } else {
+                    if (temPipe(id_dep)) {
+                        var arr = id_dep.split('|');
+                        arr.forEach(function(value) {
+                            edges.push({ from: value, to: id_tar, arrows: 'to', dashes: true });
+                        });
+                    } else {
+                        edges.push({ from: id_dep, to: id_tar, arrows: 'to', dashes: true });
+                    }
+                }
+            } else if (!id_dep && vv === 0) {
+                if (String(stt) === 'SUCESSO') {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to' });
+                } else if (String(stt) === 'FALHA') {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to', dashes: true, label: 'FALHA', font: { align: 'middle' }, color: { color: '#F2080F' } });
+                } else if (String(stt) === 'AGUARDANDO') {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to', dashes: true, label: 'Aguardando', font: { align: 'middle' } });
+                } else {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to' });
+                }
+            }
+
+            if (vv === 1) {
+                vv = 0;
+                if (String(stt) === 'SUCESSO') {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to' });
+                } else if (String(stt) === 'FALHA') {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to', dashes: true, label: 'FALHA', font: { align: 'middle' }, color: { color: cor } });
+                } else if (String(stt) === 'AGUARDANDO') {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to', dashes: true, label: 'Aguardando', font: { align: 'middle' } });
+                } else {
+                    edges.push({ from: n_g, to: id_tar, arrows: 'to' });
+                }
+            }
+        });
+
+
+        var container = document.getElementById("network");
+        var graphData = {
+            nodes: tasks,
+            edges: edges
+        };
+        var options;
+        if(ele_tipo === 'Pipeline'){
+            options = {
+                edges: {
+                    smooth: {
+                    forceDirection: "horizontal",
+                    roundness: 0.85,
+                    type:"dynamic"
+                    }
+                },
+                physics: {
+                    repulsion: {
+                        centralGravity: 0,
+                        springLength: ele_dist,
+                        springConstant: 1.2,
+                        nodeDistance: ele_dist,
+                        damping: 0.5
+                    },
+                    maxVelocity: 53,
+                    minVelocity: 0.75,
+                    solver: "repulsion",
+                    timestep: 0.28                        
+                }
+            };
+        }else if (ele_tipo === 'Hierarquia'){
+            options = {
+                edges: {
+                    font: {
+                        align: "top"
+                    },
+                },
+                layout: {
+                    hierarchical: {
+                        enabled: true,
+                        levelSeparation: ele_dist,
+                        nodeSpacing: ele_dist,
+                        direction: ele_dire,
+                        sortMethod: "directed",
+                    },
+                    physics: {
+                        hierarchicalRepulsion: {
+                            nodeDistance: ele_dist,
+                            springLength: ele_dist,
+                            springConstant: 5.7,
+                            centralGravity: 0,
+                        }
+                    }
+                }
+            };
+        }else{
+            if(!options){
+                options = {
+                    edges: {
+                        font: {
+                            align: "top"
+                        },
+                    },
+                    layout: {
+                        hierarchical: {
+                            enabled: true,
+                            levelSeparation: 250,
+                            nodeSpacing: 250,
+                            direction: "LR",
+                            sortMethod: "directed",
+                        },
+                        physics: {
+                            hierarchicalRepulsion: {
+                                nodeDistance: 250,
+                                springLength: 250,
+                                springConstant: 5.7,
+                                centralGravity: 0,
+                            }
+                        }
+                    }
+                };                
+            }
+        }
+        
+        network = new vis.Network(container, graphData, options);
+        network.on("doubleClick", function(clickProperties) {
+            if (clickProperties.nodes.length == 1) {
+                let id = clickProperties.nodes[0];
+                if (typeof id === 'number') {
+                    alert('Selecione uma tarefa válida')
+                }else{
+                    abrir_modal_geral(id);
+                }
+            }
+        });
+        if(cachedData === null){
+            network.clustering.cluster();
+        }
+        network.fit();
+    }
+
+    let assunto = document.getElementById("txt_sel_assunto").value;
+
+    let cadeiaElement = document.getElementById("txt_sel_cadeia");
+    let selecionados = Array.from(cadeiaElement.selectedOptions);
+    let lista = '';
+
+    if (selecionados.length > 0) {
+        let itens = selecionados.map(option => option.value);
+        lista = itens.map(item => `'${item}'`).join(',');
+    }
+
+    let dt_pesq = document.getElementById("dt_pesq").value;
+
+    if (dt_pesq == '') {
+        return;
+    }
+
+    if (assunto == '' || assunto.length == 0) {
+        assunto = '';
+    }
+    if (cadeiaElement == '' || cadeiaElement.length == 0) {
+        cadeiaElement = '';
+    }
+
+    if (mudanca_grafico === true && cachedData != null) {
+        processGraphData(cachedData);
+        return;
+    }
+
+    let pagina = "lista_hierarquia_tarefas";
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: pagina,
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: {
+            txt_sel_assunto: assunto,
+            txt_sel_cadeia: lista,
+            txt_dt_pesq: dt_pesq
+        },
+        success: function(data) {
+            $('#recebe_gif_processando').html('');
+            cachedData = data;
+            processGraphData(data);
+           
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error: ', status, error);
+            $('#recebe_gif_processando').html('');
+        }
+    });
+}
+// FIM PESQUISA FLOW
+
+
+
+
+function resetar_tarefa_modal_grafico1(){
+    const txt_tar_apagar = document.getElementById("selected_id").value;
+    const tipo = document.getElementById("type_id").value;
+    const tipo_tar = document.getElementById("local-mensagens");
+
+    if(tipo !== 'ALTERAR'){
+        alert('\nFALHA\n\nNão pode reiniciar uma tarefa ainda não criada!\n');
+        return;
+    }
+
+    if(tipo_tar.innerHTML == 'Isto não é uma tarefa'){alert('Isto não é uma tarefa!');return;}
+    if(txt_tar_apagar == ''){return;};
+
+    if (!confirm(`\nCONFIRMAÇÃO\n\nDeseja realmente reiniciar a tarefa ${txt_tar_apagar}? \nTenha cuidado com processos que ainda possam estar executando.\n`) == true) {
+        return;
+    }; 
+
+    let pagina = "reiniciar_tarefa";
+    $.ajax({
+        type: 'GET',
+        dataType: 'text',
+        url: pagina,
+        beforeSend: function () {
+            $('#local-mensagens').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: {id_tarefa: txt_tar_apagar},
+        success: function (msg){
+            alert(`\nAVISO\n\nSolicitado ao servidor o reinicio da tarefa ${txt_tar_apagar}. Necessário recarregar o gráfico para visualizar.\n`);
+            fechar_modal_alt();
+            $('#local-mensagens').html("");
+            setTimeout(function() {
+                modal.style.display = "none"; 
+                txt_tar_apagar.value = '0';
+            }, 1000);                        
+                
+        }
+    })
+};
+
+
+function resetar_cadeia_modal_grafico1(){
+    const txt_tar_apagar = document.getElementById("selected_id").value;
+    const tipo = document.getElementById("type_id").value;
+    const tipo_tar = document.getElementById("local-mensagens");
+
+    if(tipo !== 'ALTERAR'){
+        alert('\nFALHA\n\nNão pode reiniciar uma cadeia com base em uma tarefa ainda não criada!\n');
+        return;
+    }
+
+    if(tipo_tar.innerHTML == 'Isto não é uma tarefa'){
+        alert('\nFALHA\n\nIsto não é uma tarefa.\n');
+        return;
+    }
+
+    if(txt_tar_apagar == ''){return;};
+
+    if (!confirm("\nCONFIRMAÇÃO\n\nDeseja realmente reiniciar toda a cadeia? \nTenha cuidado com processos que ainda possam estar executando.\n") == true) {
+        return;
+    }; 
+    let pagina = "reiniciar_tarefa_cadeia";
+    $.ajax({
+        type: 'GET',
+        dataType: 'text',
+        url: pagina,
+        beforeSend: function () {
+            $('#local-mensagens').html(`<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`);
+        },
+        data: {id_tarefa: txt_tar_apagar},
+        success: function (msg){
+            alert(`\nAVISO\n\nA solicitação de reinciar a cadeia da tarefa ${txt_tar_apagar} foi enviada ao servidor.\nNecessário recarregar o gráfico para visualizar.\n`);
+            fechar_modal_alt();
+            $('#local-mensagens').html("");
+            setTimeout(function() {
+                modal.style.display = "none"; 
+                txt_tar_apagar.value = '0';
+            }, 1000);                        
+                
+        }
+    })
+};
+
+
+</script>
+
+
+<form>
+
+  <br><br><br><br>
+  &nbsp &nbsp &nbsp
+  
+      <div style="align-items: center; display: flex; flex-direction: row; justify-content: left; top: -25px; position: relative;">
+            
+            <div class='acima' style='width:20%;'>
+                <label for='txt_sel_assunto'><strong>Tema:</strong></label><br>
+                <select id='txt_sel_assunto' name='txt_sel_assunto' required class='txt' style='width:97%;' onchange="funcao_pesquisa_cadeia();">
+                    <option value=''></option>             
+                    {% for assunto in assuntos %}
+                        <option value="{{ assunto['tema'] }}">{{ assunto['tema'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>&nbsp &nbsp
+
+            <div class='acima' style='width:30%;'>
+                <label for='txt_sel_cadeia'><strong>Cadeia:</strong></label><br>
+                <select id='txt_sel_cadeia' name='txt_sel_cadeia' required class='txt' style='width:97%;' multiple size="1" onmouseover="changeSize(3)" onmouseout="changeSize(1)">
+                    <option value=''></option>  
+                </select>
+            </div>&nbsp &nbsp         
+            <div class='acima' style='width:10%;'>
+                <label for='dt_pesq'><strong>Data:</strong></label><br>
+                <input type='date' class='txt' id='dt_pesq' name='dt_pesq' min='2022-10-01' style='border:thin solid #ddd;border-radius: 3px;min-height: 22px;'>
+                &nbsp &nbsp
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                      const hoje = new Date().toISOString().split('T')[0];             
+                      const dtPesq = document.getElementById('dt_pesq');
+                      dtPesq.value = hoje;
+                      dtPesq.max   = hoje;
+                    });
+                </script>   
+
+            </div> 
+
+                <div class='acima' style='width:7%;'>
+                    <label for='txt_sel_tipo'><strong>Tipo Gráfico:</strong></label><br>
+                    <select id='txt_sel_tipo' name='txt_sel_tipo' required class='txt' style='height: 34px; width:97%;' size="1" onchange="funcao_pesquisa_flow(true);">
+                        <option value='Hierarquia'>Hierarquia</option>  
+                        <option value='Pipeline'>Pipeline</option>   
+                    </select>
+                </div>&nbsp &nbsp    
+
+                <div class='acima' style='width:4.5%;'>
+                    <label for='txt_sel_direcao'><strong>Direção:</strong></label><br>
+                    <select id='txt_sel_direcao' name='txt_sel_direcao' required class='txt' style='height: 34px; width:97%;' size="1" onchange="funcao_pesquisa_flow(true);">
+                        <option value='LR'>LR</option>  
+                        <option value='RL'>RL</option>  
+                        <option value='UD'>UD</option>
+                        <option value='DU'>DU</option>    
+                    </select>
+                </div>&nbsp &nbsp    
+
+                <div class='acima' style='width:4.5%;'>
+                    <label for='txt_sel_distancia'><strong>Distância:</strong></label><br>
+                    <select id='txt_sel_distancia' name='txt_sel_distancia' required class='txt' style='height: 34px; width:97%;' size="1" onchange="funcao_pesquisa_flow(true);">
+                        <option value='250'>250</option> 
+                        <option value='220'>220</option>  
+                        <option value='180'>180</option>
+                        <option value='150'>150</option>
+                        <option value='120'>120</option>    
+                    </select>
+                </div>&nbsp &nbsp         
+
+                <div class="acima">
+                    <input type="button" value="Buscar" onclick="funcao_pesquisa_flow()" class="bt" name="btBuscar" id="btBuscar"/>
+                    <input type="button" id="btnOpenModal2" value="Criar" class="bt"/>
+                </div>                
+
+            
+
+            
+    </div>
+    <label id='recebe_gif_processando'></label>         
+            
+   
+    <div id="network" class='div_grafico_viz' style="border-radius: 10px;border: 1px solid lightgray;z-index: order 2;"></div>
+    <div id='retorna_dados'></div>
+
+    </form>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/select2.min.css') }}" type="text/css"/>
+    <script src="{{ url_for('static', filename='js/componentes/select2.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#txt_sel_cadeia').select2({
+            tags: false,
+            allowClear: true,
+            width: '100%',
+            });
+        });
+        $(document).ready(function() {
+            $('#txt_sel_assunto').select2({
+            tags: false,
+            allowClear: true,
+            width: '100%',
+            });
+        });        
+    </script>
+	
+	<script>
+        function configurarCampos() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const assunto = urlParams.get('assunto');
+            const cadeia = urlParams.get('cadeia');
+
+            const assuntoElement = document.getElementById("txt_sel_assunto");
+            const cadeiaElement = document.getElementById("txt_sel_cadeia");
+
+            if (assunto && cadeia && assuntoElement && cadeiaElement) {
+                assuntoElement.value = assunto;
+
+                // Verificar se o valor de cadeia existe no select
+                if (!Array.from(cadeiaElement.options).some(opt => opt.value === cadeia)) {
+                    let newOption = new Option(cadeia, cadeia);
+                    cadeiaElement.add(newOption);
+                }
+
+                cadeiaElement.value = cadeia;
+                funcao_pesquisa_flow();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', configurarCampos);
+
+    </script>
+
+
+
+<script>
+    const v_chats = {{ chats|tojson }};
+    const v_hosts = {{ hosts|tojson }};
+    const v_tag_bloq = {{ tags|tojson }};
+</script>
+
+{% include 'modal_criar_tar_graf.html' %}
+
+
+  </body>
+</html>

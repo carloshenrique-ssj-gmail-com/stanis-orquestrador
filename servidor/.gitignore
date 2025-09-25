@@ -1,0 +1,6 @@
+.history/
+__python/__pycache__/
+_api_stanis/statistics/*.json
+_api_stanis/test/
+_api_stanis/__pycache__/
+

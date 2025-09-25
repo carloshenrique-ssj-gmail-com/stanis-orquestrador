@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<title>Stanis - Cadastro de Usuarios</title>    
+<head> 
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/cad.js') }}"></script>
+</head>
+
+<body>
+    {% include 'header.html' %}
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+</div>
+
+
+        <form>
+        <br>
+
+        <div class='_cadastro_usuarios'>
+            <br>
+            <div class='acima' style='width:7%;'>
+                <label for='txt_usuario'><strong>Matricula:</strong></label><br>
+                <input type='text' id='txt_usuario' name='txt_usuario' required maxlength='15' class='txt' style='width:90%'/>
+            </div>
+            <div class='acima' style='width:25%;'>
+                <label for='txt_nome_usuario'><strong>Nome:</strong></label><br>
+                <input type='text' id='txt_nome_usuario' name='txt_nome_usuario' maxlength='30' class='txt' style='width:97%'/>
+            </div>
+            <div class='acima' style='width:25%;'>
+                <label for='txt_email'><strong>E-Mail Porto:</strong></label><br>
+                <input type='email' id='txt_email' name='txt_email' pattern=".+@portoseguro.com.br" required maxlength='50' class='txt' style='width:97%'/>
+            </div>            
+
+            <div class='acima' style='width:12%;'>
+                <label for='txt_perfil_usuario'><strong>Perfil:</strong></label><br>
+                <select id='txt_perfil_usuario' name='txt_perfil_usuario' required class='txt' style='width:97%'>
+                    <option value=''></option>
+                    <option value='1'>Administrador</option>
+                    <option value='2'>Observador</option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:15%;'>
+                <label for='txt_id_google_chat'><strong>Google Chat - Id User:</strong></label><br>
+                <input type='number' id='txt_id_google_chat' name='txt_id_google_chat' required maxlength='50' title='Na Porto a informação fica substituída pelo email do usuário na tela, mas você pode obter o user id inspecionando o elemento da foto do usuario no Google Chat. Este campo não é obrigatório, mas deixar de preencher a informação correta vai tornar menos eficiente algumas notificações.' class='txt' style='width:97%'/>
+            </div>    
+            <br><br>
+            <input type="button" value="Criar" class="bt" onclick="funcao_cad_usuario(1);" name="btSalvar" id="btSalvar"/>
+            <input type="button" value="Resetar" class="bt" onclick="funcao_cad_usuario(2);" name="btResetar" id="btResetar"/> 
+            <input type="button" value="Alterar" class="bt" onclick="funcao_cad_usuario(3);" name="btAlterar" id="btAlterar"/>  
+            <input type="button" value="Excluir" class="bt" onclick="funcao_cad_usuario(4);" name="btExcluir" id="btExcluir"/>            
+            
+            <br>
+
+            
+            <label id='recebe_gif_processando'></label> 
+
+            <br>
+            <br> 
+            <table borde='1' id='tbl_1' class='tabela'>
+            <thead>
+                <tr>
+                    <td><strong>Matricula</strong></td>
+                    <td><strong>Nome</strong></td>
+                    <td><strong>Email</strong></td>
+                    <td><strong>Perfil</strong></td>
+                    <td><strong>Senha</strong></td>
+                    <td><strong>Id Google Chat</strong></td>
+                </tr>    
+            </thead>
+            <tboard>
+                {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario['usuario'] }}</td>
+                        <td>{{ usuario['nome'] }}</td>
+                        <td>{{ usuario['email'] }}</td>
+                        <td>{{ usuario['tipo'] }}</td>
+                        <td>{{ usuario['senha'] }}</td>
+                        <td>{{ usuario['id_user_chat'] }}</td>
+                    </tr>
+                {% endfor %}                
+            </tboard>
+            </table>
+            
+
+    </form>  
+      
+    </body>    
+</html>

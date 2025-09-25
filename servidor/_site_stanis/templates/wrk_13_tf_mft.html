@@ -1,0 +1,237 @@
+<!doctype html>
+
+<html>
+<title>Stanis - Mover Arquivos Locais</title>    
+<head> 
+    <title>Stanis - Mover Arquivos Locais</title>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/wrk_13_tf_mft.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/consulta_status_linha.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/botoes.js') }}"></script>
+</head>
+
+<body>
+    {% include 'header.html' %}
+    {% include 'modal_historico.html' %}
+    {% include 'button_scroll_up.html' %}
+
+<script>    
+    // pagina alteracao
+    const pagina = 'salvar_alteracao_tf_mft';
+    
+    // informa os elementos necessários de criar para a tela de alteração.
+    const novos_elementos = [
+    { id: '_txt_dir_origem', type: 'text', label: 'Dir. Origem', width: '69.5%', attrs: { required: true, maxlength: 600, style: 'width:98%' } },
+    { id: '_txt_dir_destino', type: 'select', label: 'Destino MFT', width: '29.5%', attrs: { required: true, maxlength: 600, style: 'width:97%' }, options: [
+        { value: '', text: '' },
+        { value: '\\\\pfs01\\financeiro\\dados_diretoria_financeira\\mft\\miscelanea', text: 'Miscelanea' },
+        { value: '\\\\pfs01\\financeiro\\dados_diretoria_financeira\\mft\\api', text: 'API' },
+        { value: '\\\\pfs01\\financeiro\\dados_diretoria_financeira\\mft\\cnab', text: 'CNAB' },
+        { value: '\\\\pfs01\\financeiro\\dados_diretoria_financeira\\mft\\ftp', text: 'SFTP' },
+        { value: '\\\\pfs01\\financeiro\\dados_diretoria_financeira\\mft\\recupera', text: 'Recupera' },
+        { value: '\\\\pfs01\\financeiro\\dados_diretoria_financeira\\mft\\google_drive', text: 'GoogleDrive' }
+        ] },
+    { id: '_txt_ini_arq', type: 'text', label: 'Inicio Arq', width: '83.5%', attrs: { required: true, maxlength: 150, style: 'width:98%' }},
+    { id: '_txt_fim_arq', type: 'select', label: 'Arq', width: '15%', attrs: { required: true, style: 'width:97%' }, options: [
+        { value: '', text: '' },
+        { value: 'csv', text: 'CSV' }
+        ]
+    },
+    ];   
+
+    // campos sempre obrigatórios
+    const obrigatorios = [
+        '_txt_descicao_tar','_usuario','_txt_dir_origem','_txt_dir_destino','_txt_ini_arq','_txt_fim_arq',
+        '_txt_hr_exe','_txt_hr_limit','_txt_recorrencia'
+    ];    
+
+  // colunas para carregar campos na tela de alteração: tela_alteracao
+    const mappings = [
+        { col: 1,  idElemento: '_txt_descicao_tar' },
+        { col: 2,  idElemento: '_usuario' },
+        { col: 3,  idElemento: '_txt_dir_origem' },
+        { col: 4,  idElemento: '_txt_dir_destino' },
+        { col: 5,  idElemento: '_txt_ini_arq' },
+        { col: 6,  idElemento: '_txt_fim_arq' },
+        { col: 7,  idElemento: '_txt_hr_exe' },
+        { col: 8,  idElemento: '_txt_hr_limit' },
+        { col: 9, idElemento: '_txt_recorrencia' },
+        { col: 10, idElemento: '_txt_dia_mes' },
+        { col: 11, idElemento: '_txt_depend_tar' },
+        { col: 12, idElemento: '_txt_id_chat' },
+        { col: 14, idElemento: '_txt_work_fixo' },
+        { col: 15, idElemento: '_txt_obs_tar' },
+        { col: 16, idElemento: '_txt_host_fixo' }
+    ];        
+
+  // ids dos campos que sempre queremos validar antes de enviar
+    const colunas_validar = [
+        '_id', '_txt_descicao_tar', '_usuario',
+        '_txt_dir_origem', '_txt_dir_destino', '_txt_ini_arq', '_txt_fim_arq',
+        '_txt_hr_exe', '_txt_hr_limit',
+        '_txt_recorrencia', '_txt_dia_mes', '_txt_depend_tar',
+        '_txt_id_chat', '_txt_work_fixo', '_txt_obs_tar',
+        '_txt_host_fixo'
+    ];
+
+
+</script>    
+
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+</div>
+
+
+        <form method="post" name="form">
+        <br>
+        
+        
+
+        <div class='_tarefas_move_arq_mft'>
+            {% include 'wrk_00_modal_alteracao.html' %}
+            <br>
+            <div class='acima' style='width:40%;'>
+                <label for='txt_dir_origem'><strong>Dir. Origem:</strong></label><br>
+                <input type='text' id='txt_dir_origem' name='_txt_dir_origem' required maxlength='600' class='txt' style='width:97%'/>
+            </div>
+            <div class='acima' style='width:15%;'>
+                <label for='txt_dir_destino'><strong>Destino MFT:</strong></label><br>
+                <select id='txt_dir_destino' name='txt_dir_destino' required class='txt' style='width:95%'>
+                    <option value=''></option>
+                    <option value='\\pfs01\financeiro\dados_diretoria_financeira\mft\miscelanea'>Miscelanea</option>
+					<option value='\\pfs01\financeiro\dados_diretoria_financeira\mft\api'>API</option>
+					<option value='\\pfs01\financeiro\dados_diretoria_financeira\mft\cnab'>CNAB</option>
+					<option value='\\pfs01\financeiro\dados_diretoria_financeira\mft\ftp'>SFTP</option>
+					<option value='\\pfs01\financeiro\dados_diretoria_financeira\mft\recupera'>Recupera</option>
+                    <option value='\\pfs01\financeiro\dados_diretoria_financeira\mft\google_drive'>GoogleDrive</option>
+                </select>                
+            </div>
+
+            <div class='acima' style='width:30%;'>
+                <label for='txt_ini_arq'><strong>Inicio Arq:</strong></label><br>
+                <input type='text' id='txt_ini_arq' name='txt_ini_arq' maxlength='150' required class='txt' style='width:94%'/>
+            </div> 
+
+            <div class='acima' style='width:8%;'>    
+                <label for='txt_fim_arq'><strong>Ext.:</strong></label><br>
+                <select id='txt_fim_arq' name='txt_fim_arq' required class='txt' style='width:95%'>
+                    <option value=''></option>
+                    <option value='csv'>CSV</option>
+                </select>                                                                  
+            </div>
+            <br>
+            <br>
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_hr_exe'><strong>Hora Execução:</strong></label><br>
+                <input type='time' id='txt_hr_exe' name='txt_hr_exe' min="00:01" max="23:00" required class='txt' style='width:95%'/>  <!-- onkeyup="value='';" -->                                                 
+            </div>
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_hr_limit'><strong>Hora Limite:</strong></label><br>
+                <input type='time' id='txt_hr_limit' name='txt_hr_limit' min="00:02" max="23:59" required class='txt' style='width:95%'/> <!-- onkeyup="value='';" -->                                                  
+            </div>
+
+            <div class='acima' style='width:10%;'>
+                <label for='txt_recorrencia'><strong>Recorrencia:</strong></label><br>
+                <select id='txt_recorrencia' name='txt_recorrencia' required class='txt' style='width:95%' onchange="funcao_frequencia();">
+                    <option value='1'>Diaria</option>
+                    <option value='2'>Seg-Sex</option>
+                    <option value='3'>Mensal</option>
+                    <option value='4'>Semanal</option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:8%;'>    
+                <label for='txt_dia_mes' id='txt_label_dia_mes'><strong>Dia:</strong></label><br>
+                <input disabled type='number' id='txt_dia_mes' name='txt_dia_mes' min='1' max='31' value='' onkeyup="if(value<0 || value>31) value='';" maxlength='2' class='txt' style='width:95%'/>                                                   
+            </div>
+
+            <div class='acima' style='width:10%;'>    
+                <label for='txt_depend_tar'><strong>Depende da Tarefa:</strong></label><br>
+                <input type='text' id='txt_depend_tar' name='txt_depend_tar' value='' onkeypress="return filtroTeclas(event);" maxlength='50' class='txt' style='width:95%'/>                                                   
+            </div>
+            <div class='acima' style='width:8%;'>    
+                <label for='txt_id_chat'><strong>Chat:</strong></label><br>                                                  
+                <select id='txt_id_chat' name='txt_id_chat' required class='txt' style='width:97%'>
+                    <option value=''></option>
+                    {% for chat in chats %}
+                        <option value="{{ chat['codigo'] }}">{{ chat['nome_grupo'] }}</option>
+                    {% endfor %}
+                </select>            
+            </div>
+            <div class='acima' style='width:28%;'>    
+                <label for='txt_descicao_tar'><strong>Nome Tarefa:</strong></label><br>
+                <input type='text' id='txt_descicao_tar' name='txt_descicao_tar' maxlength='100' required class='txt' style='width:98%'/>                                                   
+            </div>  
+                  
+            <div class='acima' style='width: 8.1%;'>    
+                <label for='txt_work_fixo'><strong>Worker:</strong></label><br>
+                <input type='number' id='txt_work_fixo' name='txt_work_fixo' min='0' max='9999' value='0' onkeyup="if(value<0 || value>9999) value='';" maxlength='7' class='txt' style='width:95%'/>                                                   
+            </div>
+            <br><br>
+            <div class='acima' style='width:12%;'>    
+                <label for='txt_host_fixo'><strong>Host Fixo:</strong></label><br>                                                  
+                <select id='txt_host_fixo' name='txt_host_fixo' required class='txt' style='width:97%' title = 'Só informe um Host Fixo se for obrigatório a tarefa rodar nesta maquina.'>
+                    <option value='0'>Livre</option>
+                    {% for host in hosts %}
+                        <option value="{{ host['nome_maquina'] }}">{{ host['nome_maquina'] }}</option>
+                    {% endfor %}
+                </select>            
+            </div>                            
+            <br><br> 
+            <div class='acima' style='width:38.5%;'>    
+                <label for='txt_obs_tar'><strong>Doc:</strong></label><br>
+                <textarea title='Este campo, no momento, não é obrigatório, mas é uma boa prática de controle de atividades descrever o que será executado neste processo.' id='txt_obs_tar' name='txt_obs_tar' value="" maxlength='4000' cols="150" rows="2" class='txt' style='width:100%'></textarea>                                               
+            </div>
+            <br>
+            <br>
+                  
+            {% if perfil == '1' %}
+                <input type="button" value="Criar" onclick="funcao_valida_salvamento_tarefa_mover_arquivo_mft()" class="bt" name="btSalvar" id="btSalvar"/>
+            {% endif %}          
+            
+            {% include 'filtro_simples_tabela.html' %}
+            
+            <label id='recebe_gif_processando'></label> 
+
+            <br>
+            <br> 
+            <div id="conteiner-tabela"></div>
+            <br>
+            <input type="button" value="Exportar"  onclick="extrair_tabela_1()" class="bt" id="btExtrair1" name="btExtrair1"/> 
+    </form>  
+      
+    </body>   
+    <script>funcao_listar_tarefas_tf_mft()</script>  
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            var url = new URL(window.location.href);
+            var valor = url.searchParams.get("linha");
+
+            if (valor) {
+                var elementoInterval = setInterval(function () {
+                    var elemento = document.getElementById(valor);
+                    if (elemento) {
+                        clearInterval(elementoInterval);
+                        elemento.style.backgroundColor = "lightblue";
+                        elemento.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                }, 100);
+            }
+        });
+    </script>
+ 	<script>
+		function abrirGrafico(assunto, cadeia) {
+			var url = 'wrk_hierarquia?assunto=' + encodeURIComponent(assunto) + '&cadeia=' + encodeURIComponent(cadeia);
+			window.open(url, '_blank');
+		}
+	</script>      
+</html>
+
+
+
+

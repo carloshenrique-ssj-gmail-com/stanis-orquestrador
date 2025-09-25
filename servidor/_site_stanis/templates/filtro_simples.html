@@ -1,0 +1,68 @@
+<script>
+function filtra_tab1_nome_tarefa(){
+    $(function(){
+        $('#txtColuna0099').keyup(function(){       
+                            var index = 5;
+                            var nth = '#tbl_1 td:nth-child('+(index+1).toString()+')';
+                            var valor = $('#txtColuna0099').val().toUpperCase();
+                            $('#tbl_1 tbody tr').show();
+                            var linha = 0;
+                            $(nth).each(function(){
+                                linha++;
+                                if(linha>1){
+                                    if($(this).text().toUpperCase().indexOf(valor) < 0){
+                                            $(this).parent().hide();
+                                    }else{
+                                        $(this).parent().show();
+                                    }
+                                };
+                            });
+                    });
+                    
+                    $('#tbl_1 input').blur(function(){
+                        $(this).val('');
+                    });
+                
+    });
+}; 
+
+function filtra_tab1_cadeia(){
+    $(function(){
+        $('#txtColuna0098').keyup(function(){       
+                            var index = 1;
+                            var nth = '#tbl_1 td:nth-child('+(index+1).toString()+')';
+                            var valor = $('#txtColuna0098').val().toUpperCase();
+                            $('#tbl_1 tbody tr').show();
+                            var linha = 0;
+                            $(nth).each(function(){
+                                linha++;
+                                if(linha>1){
+                                    if($(this).text().toUpperCase().indexOf(valor) < 0){
+                                            $(this).parent().hide();
+                                    }else{
+                                        $(this).parent().show();
+                                    }
+                                };
+                            });
+                    });
+                    
+                    $('#tbl_1 input').blur(function(){
+                        $(this).val('');
+                    });
+                
+    });
+}; 
+</script>
+
+<br><br>
+<div class='acima' style='width:25%;'>
+    <label for='txtColuna0098'><strong>Cadeia:</strong></label><br>
+    <input type='text' id='txtColuna0098' name='txtColuna0098' onkeyup='filtra_tab1_cadeia();' maxlength='150' class='txt' style='width:97%'/>
+</div>
+
+<div class='acima' style='width:25%;'>
+    <label for='txtColuna0099'><strong>Nome Tarefa:</strong></label><br>
+    <input type='text' id='txtColuna0099' name='txtColuna0099' onkeyup='filtra_tab1_nome_tarefa();' maxlength='150' class='txt' style='width:97%'/>
+</div>
+
+</br>

@@ -1,0 +1,186 @@
+<!doctype html>
+
+<html>
+<title>Stanis - Adm. Cadastro Maquinas</title>    
+<head> 
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/componentes/cad.js') }}"></script>
+    <style>
+        .hide-data {
+            filter: blur(3px);
+        }
+
+        .table-cell:hover .hide-data {
+            filter: blur(0);
+        }        
+    </style>
+</head>
+
+<body>
+<!-- MENU -->
+{% include 'header.html' %}
+
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+</div>
+
+
+        <form method="post" name="form">
+        <br>
+
+        <div class='_cadastro_hostname'>
+            <br>
+            <div class='acima' style='width:7%;'>
+                <label for='txt_hostname'><strong>Hostname:</strong></label><br>
+                <input type='text' id='txt_hostname' name='txt_hostname' required maxlength='40' class='txt' style='width:95%'/>
+            </div>
+            <div class='acima' style='width:18%;'>
+                <label for='txt_nome_host'><strong>Nome do Hostname:</strong></label><br>
+                <input type='text' id='txt_nome_host' name='txt_nome_host' maxlength='50' class='txt' style='width:97%'/>
+            </div>
+            <div class='acima' style='width:10%;'>
+                <label for='txt_wrk_fixo'><strong>Grupo Worker:</strong></label><br>
+                <input type='number' min=1 max=99 value=1 required id='txt_wrk_fixo' name='txt_wrk_fixo' maxlength='2' class='txt' style='width:90%'/>
+            </div>   
+
+            <br><br>
+            <div class='acima' style='width:5.2%;'>
+                <label for='txt_transf_arq'><strong>Transf. Arq:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_transf_arq' name='txt_transf_arq' maxlength='2' class='txt' style='width:90%'/>
+            </div>            
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_up_gcp'><strong>Up GCP:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_up_gcp' name='txt_up_gcp' maxlength='2' class='txt' style='width:90%'/>
+            </div>   
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_down_gcp'><strong>Down GCP:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_down_gcp' name='txt_down_gcp' maxlength='2' class='txt' style='width:90%'/>
+            </div>   
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_proc_gcp'><strong>Proc. GCP:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_proc_gcp' name='txt_proc_gcp' maxlength='2' class='txt' style='width:90%'/>
+            </div> 
+             
+            <div class='acima' style='width:5%;'>
+                <label for='txt_script_py'><strong>Script Py:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_script_py' name='txt_script_py' maxlength='2' class='txt' style='width:90%'/>
+            </div>  
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_egp_sas'><strong>EGP SAS:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_egp_sas' name='txt_egp_sas' maxlength='2' class='txt' style='width:90%'/>
+            </div>  
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_up_sas'><strong>Up SAS:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_up_sas' name='txt_up_sas' maxlength='2' class='txt' style='width:90%'/>
+            </div>              
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_down_sas'><strong>Down SAS:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_down_sas' name='txt_down_sas' maxlength='2' class='txt' style='width:90%'/>
+            </div>    
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_excel_vba'><strong>Excel VBA:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_excel_vba' name='txt_excel_vba' maxlength='2' class='txt' style='width:90%'/>
+            </div>   
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_script_vbs'><strong>VBS:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_script_vbs' name='txt_script_vbs' maxlength='2' class='txt' style='width:90%'/>
+            </div>               
+
+            <div class='acima' style='width:5%;'>
+                <label for='txt_fun_py'><strong>Fun. Py:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_fun_py' name='txt_fun_py' maxlength='2' class='txt' style='width:90%'/>
+            </div>   
+
+            <div class='acima' style='width:8%;'>
+                <label for='txt_read_uri_table'><strong>GCP Uri/Tabela:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_read_uri_table' name='txt_read_uri_table' maxlength='2' class='txt' style='width:90%'/>
+            </div>  
+            <div class='acima' style='width:8%;'>
+                <label for='txt_trans_file_mft'><strong>Movimento MFT:</strong></label><br>
+                <input type='number' min=0 max=10 required id='txt_trans_file_mft' name='txt_trans_file_mft' maxlength='2' class='txt' style='width:90%'/>
+            </div>              
+
+            <br><br>
+            <input type="button" value="Incluir" class="bt" onclick="funcao_cad_hostname(1);" name="btIncluir" id="btIncluir"/> 
+            <input type="button" value="Atualizar" class="bt" onclick="funcao_cad_hostname(3);" name="btAtualizar" id="btAtualizar"/>
+            <input type="button" value="Excluir" class="bt" onclick="funcao_cad_hostname(2);" name="btExcluir" id="btExcluir"/>            
+            
+            <br>
+
+            
+            <label id='recebe_gif_processando'></label> 
+
+            <br>
+            <br> 
+            <table borde='1' style='font-size:9.5px;' id='tbl_1' class='tabela'>
+            <thead>
+                <tr>
+                    <td><strong>HostName</strong></td>
+                    <td><strong>Nome</strong></td>
+                    <td><strong>Wrk Fixo</strong></td>
+                    <td><strong>Transf. Arq.</strong></td>
+                    <td><strong>Up GCP</strong></td>
+                    <td><strong>Down GCP</strong></td>
+                    <td><strong>Proc. GCP</strong></td>
+                    <td><strong>Script Py</Script></strong></td>
+                    <td><strong>EGP SAS</strong></td>
+                    <td><strong>Up SAS</strong></td>
+                    <td><strong>Down SAS</strong></td>
+                    <td><strong>Excel VBA</strong></td>
+                    <td><strong>Script VBS</strong></td>
+                    <td><strong>Py Gatilho</strong></td>
+                    <td><strong>GCP Uri/Tab</strong></td>
+                    <td><strong>Mov. MFT</strong></td>
+                    <td><strong>Usuario</strong></td>
+                    <td><strong>Atualização</strong></td>
+                    <td><strong>Chave</strong></td>
+                </tr>    
+            </thead>
+            <tboard>
+                {% for dados in maquinas %}
+                        <tr> 
+                        <td>{{ dados['nome_maquina'] }}</td>
+                        <td>{{ dados['descricao'] }}</td>
+                        <td>{{ dados['wrk_fixo'] }}</td>
+                        <td>{{ dados['serv_transf_arq'] }}</td>
+                        <td>{{ dados['serv_up_gcp'] }}</td>
+                        <td>{{ dados['serv_down_gcp'] }}</td>
+                        <td>{{ dados['serv_proc_gcp'] }}</td>
+                        <td>{{ dados['serv_py'] }}</td>
+                        <td>{{ dados['serv_sas'] }}</td>
+                        <td>{{ dados['serv_up_sas'] }}</td>
+                        <td>{{ dados['serv_down_sas'] }}</td>
+                        <td>{{ dados['serv_vba'] }}</td>
+                        <td>{{ dados['serv_vbs'] }}</td>
+                        <td>{{ dados['serv_fun_py_gatilho'] }}</td>
+                        <td>{{ dados['serv_ler_uri_arq_tabela'] }}</td>
+                        <td>{{ dados['serv_transf_arq_mft'] }}</td>
+                        <td>{{ dados['usuario'] }}</td>
+                        <td>{{ dados['dt_atualizacao'] }}</td>
+                        <td class='table-cell'><span class='hide-data'>{{ dados['chave_maquina'] }}</span></td>
+                        </tr> 
+                {% endfor %}
+            </tboard>
+            </table>
+            
+    </form>  
+      
+    </body>    
+</html>
+
+
+
+

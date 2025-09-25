@@ -1,0 +1,180 @@
+<!doctype html>
+
+<html>
+        
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+    <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    <title>Stanis - Licenças</title>
+    <style>
+    .container {
+        width: 90%;
+        margin: 0 auto; 
+    }
+    .license {
+    background-color: #f8f9fa; /* Cor de fundo */
+    border-radius: 8px; /* Cantos arredondados */
+    padding: 20px; /* Espaçamento interno */
+    margin-bottom: 20px; /* Espaçamento inferior entre as licenças */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.license a {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.license p {
+    font-size: 14px; 
+    line-height: 1.5;
+    color: #333; 
+}    
+   </style>    
+</head>
+{% include 'button_scroll_up.html' %}
+{% include 'header.html' %}
+<body>
+
+<div class='container'>
+        <br><br><br><br>
+        <div style="display: flex;width: 100%;">
+            <div id='wrks_ativos' style='position:absolute;left:0;'></div>
+
+            <div style='margin: 0 auto;'>
+                    <font size="4px" color="#5DADE2"><strong><center>Stanis</center></strong></font>
+                    <font size="3px" color="#7f7f7f"><strong><center>Licenças de software livre</center></strong></font>
+            </div>
+        </div><br><br>
+        
+<div class="container">
+<div class="license">
+<a href="https://www.postgresql.org/about/licence/" target="_blank">PostgreSQL</a>
+
+<p>PostgreSQL é lançado sob a Licença PostgreSQL, uma licença liberal de código aberto, semelhante às licenças BSD ou MIT.<br>
+Sistema de gerenciamento de banco de dados PostgreSQL (anteriormente conhecido como Postgres, depois como Postgres95)<br>
+Porções Copyright © 1996-2024, The PostgreSQL Global Development Group<br>
+Porções Copyright © 1994, The Regents of the University of California<br><br>
+
+É concedida permissão para usar, copiar, modificar e distribuir este software e sua documentação para qualquer finalidade, sem taxas e sem acordo por escrito, desde que o aviso de direitos autorais acima e este parágrafo e os dois parágrafos seguintes apareçam em todas as cópias.<br><br>
+EM HIPÓTESE ALGUMA A UNIVERSIDADE DA CALIFÓRNIA SERÁ RESPONSÁVEL PERANTE QUALQUER PARTE POR DANOS DIRETOS, INDIRETOS, ESPECIAIS, INCIDENTAIS OU CONSEQUENTES, INCLUINDO LUCROS CESSANTES, DECORRENTES DO USO DESTE SOFTWARE E DE SUA DOCUMENTAÇÃO, MESMO QUE A UNIVERSIDADE DA CALIFÓRNIA TENHA SIDO AVISADO DA POSSIBILIDADE DE TAIS DANOS.<br><br>
+A UNIVERSIDADE DA CALIFÓRNIA SE ISENTA ESPECIFICAMENTE DE QUAISQUER GARANTIAS, INCLUINDO, MAS NÃO SE LIMITANDO A, GARANTIAS IMPLÍCITAS DE COMERCIALIZAÇÃO E ADEQUAÇÃO A UM DETERMINADO FIM.<br><br>
+O SOFTWARE FORNECIDO AQUI ESTÁ "NO ESTADO EM QUE SE ENCONTRA", E A UNIVERSIDADE DA CALIFÓRNIA NÃO TEM OBRIGAÇÕES DE FORNECER MANUTENÇÃO, SUPORTE, ATUALIZAÇÕES, MELHORIAS OU MODIFICAÇÕES.
+</p>
+</div>
+
+<div class="license">
+<a href="https://docs.python.org/3.10/license.html" target="_blank">Python 3.10</a>
+<br><br>
+
+<p>1. Este CONTRATO DE LICENÇA é celebrado entre a Python Software Foundation ("PSF"), e o Indivíduo ou Organização ("Licenciado") acessando e de outra forma usando Python 3.10 software em formato fonte ou binário e sua documentação associada.<br><br>
+
+2. Sujeito aos termos e condições deste Contrato de Licença, a PSF por meio deste
+   concede ao Licenciado uma licença mundial, não exclusiva e isenta de royalties para reproduzir,
+   analisar, testar, executar e/ou exibir publicamente, preparar trabalhos derivados,
+   distribuir e, de outra forma, usar Python 3.10 sozinho ou em qualquer derivado
+   versão, desde que, no entanto, o Contrato de Licença da PSF e o aviso de
+   copyright, ou seja, "Copyright © 2001-2023 Python Software Foundation; Todos os Direitos
+   Reservado" são mantidos apenas no Python 3.10 ou em qualquer versão derivada
+   preparado pelo Licenciado.<br><br>
+
+3. Caso o Licenciado prepare um trabalho derivado baseado ou
+   incorpora Python 3.10 ou qualquer parte dele e deseja tornar o
+   trabalho derivado disponível a terceiros conforme previsto neste documento, o Licenciado por meio deste
+   concorda em incluir em qualquer trabalho desse tipo um breve resumo das alterações feitas no Python
+   3.10.<br><br>
+
+4. A PSF está disponibilizando o Python 3.10 ao Licenciado "COMO ESTÁ".
+   A PSF NÃO FAZ REPRESENTAÇÕES OU GARANTIAS, EXPRESSAS OU IMPLÍCITAS. ATRAVÉS DE
+   EXEMPLO, MAS NÃO LIMITAÇÃO, A PSF NÃO FAZ E SE ISENTA DE QUALQUER REPRESENTAÇÃO OU
+   GARANTIA DE COMERCIALIZAÇÃO OU ADEQUAÇÃO A QUALQUER FIM ESPECÍFICO OU QUE O
+   O USO DO PYTHON 3.10 NÃO VIOLARÁ NENHUM DIREITO DE TERCEIROS.<br><br>
+
+5. A PSF NÃO SERÁ RESPONSÁVEL PERANTE O LICENCIADO OU QUALQUER OUTRO USUÁRIO DO PYTHON 3.10
+   POR QUAISQUER DANOS INCIDENTAIS, ESPECIAIS OU CONSEQUENCIAIS OU PERDAS COMO RESULTADO DE
+   MODIFICAR, DISTRIBUIR OU USAR PYTHON 3.10 OU QUALQUER DERIVADO
+   DISSO, MESMO SE AVISADO DA POSSIBILIDADE DO MESMO.<br><br>
+
+6. Este Contrato de Licença será automaticamente rescindido em caso de violação material dos
+   seus termos e condições.<br><br>
+
+7. Nada neste Contrato de Licença será considerado como criando qualquer relacionamento
+   de agência, parceria ou joint venture entre a PSF e o Licenciado. Esta licença
+   O acordo não concede permissão para usar marcas registradas ou nomes comerciais da PSF em um
+   sentido de marca registrada para endossar ou promover produtos ou serviços do Licenciado, ou qualquer
+   terceiro.<br><br>
+
+8. Ao copiar, instalar ou usar o Python 3.10, o Licenciado concorda
+   estar vinculado aos termos e condições deste Contrato de Licença.
+</p>
+</div>
+
+<div class="license">
+<a href="https://jquery.com/license/" target="_blank">JQuery</a><br><br>
+
+<p>A Licença MIT (MIT)<br><br>
+
+É concedida permissão, gratuitamente, a qualquer pessoa que obtenha uma cópia deste software e dos arquivos de documentação associados (o "Software"), para negociar o Software sem restrições, incluindo, sem limitação, os direitos de usar, copiar, modificar, mesclar , publicar, distribuir, sublicenciar e/ou vender cópias do Software e permitir que as pessoas a quem o Software seja fornecido o façam, sujeito às seguintes condições:<br><br>
+O aviso de direitos autorais acima e este aviso de permissão serão incluídos em todas as cópias ou partes substanciais do Software.<br><br>
+O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO ÀS GARANTIAS DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UM DETERMINADO FIM E NÃO VIOLAÇÃO.<br><br>
+EM HIPÓTESE ALGUMA OS AUTORES OU DETENTORES DE DIREITOS AUTORAIS SERÃO RESPONSÁVEIS POR QUALQUER RECLAMAÇÃO, DANOS OU OUTRA RESPONSABILIDADE, SEJA EM UMA AÇÃO DE CONTRATO, ATO ILÍCITO OU DE OUTRA FORMA, DECORRENTE DE, OU EM CONEXÃO COM O SOFTWARE OU O USO OU OUTRAS NEGOCIAÇÕES NO PROGRAMAS.
+</p>
+</div>
+
+<div class="license">
+<a href="https://github.com/apexcharts/apexcharts.js/blob/main/LICENSE/" target="_blank">ApexCharts v3.40.0</a>
+<br><br>
+<p>A Licença MIT (MIT)<br><br>
+
+Direitos autorais (c) 2018 ApexCharts<br><br>
+
+É concedida permissão, gratuitamente, a qualquer pessoa que obtenha uma cópia deste software e arquivos de documentação associados (o "Software"), para lidar no Software sem restrições, incluindo, sem limitação, os direitos usar, copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou vender cópias do Software e permitir que as pessoas a quem o Software é capacitado para fazê-lo, sujeito às seguintes condições:<br><br>
+
+O aviso de direitos autorais acima e este aviso de permissão devem ser incluídos em todas as cópias ou partes substanciais do Software.<br><br>
+
+O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU IMPLÍCITAS, INCLUINDO, MAS NÃO SE LIMITANDO ÀS GARANTIAS DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UM DETERMINADO FIM E NÃO VIOLAÇÃO. EM HIPÓTESE ALGUMA O OS AUTORES OU DETENTORES DE DIREITOS AUTORAIS SERÃO RESPONSÁVEIS POR QUALQUER RECLAMAÇÃO, DANOS OU OUTROS RESPONSABILIDADE, SEJA EM UMA AÇÃO DE CONTRATO, ATO ILÍCITO OU DE OUTRA FORMA, DECORRENTE DE, FORA DE OU EM CONEXÃO COM O SOFTWARE OU O USO OU OUTRAS NEGOCIAÇÕES EM O SOFTWARE.
+</p>
+</div>
+
+
+<div class="license">
+<a href="https://github.com/mdaines/viz-js/blob/v3/LICENSE" target="_blank">VizJs</a>
+<br><br>
+<p>Licença MIT<br><br>
+
+Direitos autorais (c) 2023 Michael Daines
+
+É concedida permissão, gratuitamente, a qualquer pessoa que obtenha uma cópia
+deste software e arquivos de documentação associados (o "Software"), para lidar
+no Software sem restrições, incluindo, sem limitação, os direitos
+usar, copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou vender
+cópias do Software e permitir que as pessoas a quem o Software é
+capacitado para fazê-lo, sujeito às seguintes condições:<br><br>
+
+O aviso de direitos autorais acima e este aviso de permissão serão incluídos em todos
+cópias ou partes substanciais do Software.<br><br>
+
+O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU
+IMPLÍCITAS, INCLUINDO, MAS NÃO SE LIMITANDO ÀS GARANTIAS DE COMERCIALIZAÇÃO,
+ADEQUAÇÃO A UM DETERMINADO FIM E NÃO VIOLAÇÃO. EM HIPÓTESE ALGUMA O
+OS AUTORES OU DETENTORES DE DIREITOS AUTORAIS SERÃO RESPONSÁVEIS POR QUALQUER RECLAMAÇÃO, DANOS OU OUTROS
+RESPONSABILIDADE, SEJA EM UMA AÇÃO DE CONTRATO, ATO ILÍCITO OU DE OUTRA FORMA, DECORRENTE DE,
+FORA DE OU EM CONEXÃO COM O SOFTWARE OU O USO OU OUTRAS NEGOCIAÇÕES NO
+PROGRAMAS.
+</p>
+</div>
+
+
+
+</div>        
+
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+
+</div>
+</body>
+
+
+
+</html>

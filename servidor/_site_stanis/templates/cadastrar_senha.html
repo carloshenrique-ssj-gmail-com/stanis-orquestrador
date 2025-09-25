@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Stanis - Criar Senha</title>
+        <meta http-equiv="Content-Type" content=text/html; charset=UTF-8>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/css1.css') }}"/>
+        <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+		<script src="{{ url_for('static', filename='js/darkmode.js') }}" type="text/javascript"></script>
+
+        <style>
+        form a {
+            color: #2289f0;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        form a:hover {
+            text-decoration: underline;
+        }
+        </style>           
+
+    </head>
+    <body>
+        <center><img src="{{ url_for('static', filename='images/logo_login.svg') }}" width="80px" height="70px"></center>
+
+        <div class="div_centro">
+        <form method="post" action="{{ url_for('nova_senha') }}" name="form" id="form">
+          <section class="login" id="login" style="background-color:var(--bg2);">
+              <header>
+                  <font size="5px"><strong><center>Stanis</center></strong></font>
+                  <font size="2px"><strong><center>Criar ou Alterar Senha de Acesso</center></strong></font>
+              </header>
+			  <div style="background-color:var(--bg2);">
+                <strong>Usuario:</strong><br>
+                <input type='text' name='vNome' id="vNome" placeholder='Matricula' value='{{ usuario_logado }}' size='30' class='txtTextBox' required='' maxlength='8' required=true/>
+                <br><br>
+                <strong>Senha atual:</strong><br>
+                <input type="password" name="vSenhaAtual" id="vSenhaAtual" placeholder="Senha atual... use 1234 para primeira senha" value="" size="30" class="txtTextBox" minlength="4" maxlength="15" required=true/>                
+                <br><br>
+                <strong>Nova senha:</strong><br>
+                <input type="password" name="vSenha" id="vSenha" placeholder="Nova senha..." value="" size="30" class="txtTextBox" minlength="4" maxlength="15" required=true/>
+                <br><br>
+                <strong>Confirme nova senha:</strong><br>
+                <input type="password" name="vSenha1" id="vSenha1" placeholder="Repetir nova senha..." value="" size="30" class="txtTextBox" minlength="4" maxlength="15" required=true/>
+                <br><br>
+
+                <input type='submit' value='Criar/Alterar' class='bt' name='btSalvar'/>
+                <br><br>
+                <p style="text-align: center; margin-top: 12px;">
+                    <a href="/">Voltar para login</a>
+                </p>
+
+                <br>      
+
+                    {% if mensagem %}
+                    <center><p style="color: {{ cor|default('black') }}; text-align: center;">
+                        {{ mensagem }}
+                    </p></center>
+                    {% endif %}            
+
+				</div>
+                </section>
+        </form>
+        </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form         = document.getElementById('form');
+  const vNome        = document.getElementById('vNome');
+  const vSenhaAtual  = document.getElementById('vSenhaAtual');
+  const vSenha       = document.getElementById('vSenha');
+  const vSenha1      = document.getElementById('vSenha1');
+
+  form.addEventListener('submit', event => {
+    const nomePattern = /^F\d{7}$/;
+    if (!nomePattern.test(vNome.value)) {
+      alert('Matrícula inválida. Deve começar com "F" seguido de 9 dígitos.');
+      vNome.focus();
+      event.preventDefault();
+      return;
+    }
+
+    if (vSenhaAtual.value.length < 4) {
+      alert('A senha atual deve ter ao menos 4 caracteres.');
+      vSenhaAtual.focus();
+      event.preventDefault();
+      return;
+    }
+
+    if (vSenha.value.length < 4) {
+      alert('A nova senha deve ter ao menos 4 caracteres.');
+      vSenha.focus();
+      event.preventDefault();
+      return;
+    }
+    if (vSenha.value !== vSenha1.value) {
+      alert('As senhas não coincidem.');
+      vSenha1.focus();
+      event.preventDefault();
+      return;
+    }
+  });
+});
+</script>
+        
+    </body>
+</html>

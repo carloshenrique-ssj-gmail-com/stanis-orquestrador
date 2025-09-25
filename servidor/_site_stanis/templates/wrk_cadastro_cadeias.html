@@ -1,0 +1,848 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}" type="text/css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" type="text/css"/>
+        <link rel="icon" type="imagem/png" href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+        <script src="{{ url_for('static', filename='js/jq/jquery-3.6.3.min.js') }}"> </script>
+        <script src="{{ url_for('static', filename='js/componentes/darkmode.js') }}"></script>
+    </head>
+    {% include 'button_scroll_up.html' %}
+    <body>
+        <!-- Botão de Scroll to Top (Exemplo em HTML/JS puro, se necessário) -->
+        <button onclick="topFunction()" id="btnScrollTop" title="Go to top">Topo</button>
+        <script>
+            let mybutton = document.getElementById("btnScrollTop");
+            window.onscroll = function() {scrollFunction()};
+
+            function scrollFunction() {
+              if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+              } else {
+                mybutton.style.display = "none";
+              }
+            }
+
+            function topFunction() {
+              document.body.scrollTop = 0;
+              document.documentElement.scrollTop = 0;
+            }
+        </script>
+
+
+<!-- MENU -->
+{% include 'header.html' %}
+
+<div>
+    <input id="switch" style="display: none;"  type="checkbox" name="tema" id="tema" onclick="alterarTema();">
+    <span title = 'Mudar cor de fundo'>
+    <label id="vDark001" for="switch" style="position: absolute;top:3.3%;left: 97%"><strong>IA</strong></label></span>
+</div>
+
+<script>
+function novo_valor_select(p_indice, p_combo) {
+  if (p_indice === 1) {
+    var strOpcao = prompt('Digite a opção a ser inserida', '');
+
+    if (strOpcao === null || strOpcao.trim() === '') {
+      alert('Digite um valor válido para a opção');
+      p_combo.options[0].selected = true;
+      return;
+    }
+
+    strOpcao = strOpcao.toUpperCase();
+
+    for (var i = 0; i < p_combo.length; i++) {
+      if (p_combo.options[i].value.toUpperCase() === strOpcao) {
+        alert('Este valor já existe na lista');
+        p_combo.options[i].selected = true;
+        return;
+      }
+    }
+
+    var intTamanho = p_combo.length;
+    p_combo.length = intTamanho + 1;
+    p_combo.options[intTamanho].text = strOpcao;
+    p_combo.options[intTamanho].value = strOpcao;
+    p_combo.options[intTamanho].selected = true;
+  }
+}
+
+function funcao_pesquisa_gerencias() {
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    $.ajax({
+        url: 'gerencias',
+        type: 'GET',
+        dataType: 'json',
+        data: {},
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },        
+        success: function(data) {
+            let options = '<option value=""></option>'; 
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(item => { 
+                    const valorGerencia = item.gerencia;
+                    options += `<option value="${valorGerencia}">${valorGerencia}</option>`;
+                });
+                $('#txt_sel_gerencia').html(options);
+                $('#txt_sel_gerencia').prop('disabled', false);
+                $('#recebe_gif_processando').html('');
+            } else {
+                $('#txt_sel_gerencia').html('<option value="">Nenhuma Gerencia Encontrada</option>');
+                $('#txt_sel_gerencia').prop('disabled', true); 
+                $('#recebe_gif_processando').html('');
+            }
+        },
+        error: function(error) {
+            console.error('Erro ao buscar coordenações:', error);
+            $('#txt_sel_gerencia').prop('disabled', true); 
+            $('#txt_sel_gerencia').html('<option value="">Erro ao carregar</option>');
+            $('#recebe_gif_processando').html(`Erro ao tentar carregar dados: ${error}`);
+        }
+    });
+}
+
+function funcao_pesquisa_coordenacao() {
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let gerencia_selecionada = $('#txt_sel_gerencia').val();
+    $.ajax({
+        url: 'coordenacoes',
+        type: 'GET',
+        dataType: 'json',
+        data: { gerencia: gerencia_selecionada },
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        success: function(data) {
+            let options = '<option value=""></option>'; 
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(item => { 
+                    const valorCoordenacao = item.coordenacao;
+                    options += `<option value="${valorCoordenacao}">${valorCoordenacao}</option>`;
+                });
+                $('#txt_sel_coordenacao').html(options);
+                $('#txt_sel_coordenacao').prop('disabled', false);
+                $('#recebe_gif_processando').html('');
+            } else {
+                $('#txt_sel_coordenacao').html('<option value="">Nenhuma Coordenação Encontrada</option>');
+                $('#txt_sel_coordenacao').prop('disabled', true); 
+                $('#recebe_gif_processando').html('');
+            }
+        },
+        error: function(error) {
+            console.error('Erro ao buscar coordenações:', error);
+            $('#txt_sel_coordenacao').prop('disabled', true); 
+            $('#txt_sel_coordenacao').html('<option value="">Erro ao carregar</option>');
+            $('#recebe_gif_processando').html(`Erro ao tentar carregar dados: ${error}`);
+        }
+    });
+}
+
+
+function funcao_pesquisa_temas() {
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let gerencia_selecionada = $('#txt_sel_gerencia').val();
+    let coordenacao_selecionada = $('#txt_sel_coordenacao').val();
+    let options = '<option value=""></option>'; 
+        options += "<option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>";    
+    $.ajax({
+        url: 'temas',
+        type: 'GET',
+        dataType: 'json',
+        data: { gerencia: gerencia_selecionada, coordenacao: coordenacao_selecionada },
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        success: function(data) {
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(item => { 
+                    const valorTema = item.tema;
+                    options += `<option value="${valorTema}">${valorTema}</option>`;
+                    
+                });
+                $('#txt_sel_tema').html(options);
+                $('#txt_sel_tema').prop('disabled', false);
+                $('#recebe_gif_processando').html('');
+            } else {
+                $('#txt_sel_tema').html(options);
+                $('#txt_sel_tema').prop('disabled', false); 
+                $('#recebe_gif_processando').html('');
+            }
+        },
+        error: function(error) {
+            console.error('Erro ao buscar coordenações:', error);
+            $('#txt_sel_tema').prop('disabled', true); 
+            $('#txt_sel_tema').html('<option value="">Erro ao carregar</option>');
+            $('#recebe_gif_processando').html(`Erro ao tentar carregar dados: ${error}`);
+        }
+    });
+}
+
+
+function funcao_pesquisa_subtemas() {
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let gerencia_selecionada = $('#txt_sel_gerencia').val();
+    let coordenacao_selecionada = $('#txt_sel_coordenacao').val();
+    let tema_selecionado = $('#txt_sel_tema').val();
+    let options = '<option value=""></option>'; 
+        options += "<option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>";    
+    $.ajax({
+        url: 'subtemas',
+        type: 'GET',
+        dataType: 'json',
+        data: { gerencia: gerencia_selecionada, coordenacao: coordenacao_selecionada, tema: tema_selecionado },
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        success: function(data) {
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(item => { 
+                    const valorSubtema = item.subtema;
+                    options += `<option value="${valorSubtema}">${valorSubtema}</option>`;
+                    
+                });
+                $('#txt_sel_temasub').html(options);
+                $('#txt_sel_temasub').prop('disabled', false);
+                $('#recebe_gif_processando').html('');
+            } else {
+                $('#txt_sel_temasub').html(options);
+                $('#txt_sel_temasub').prop('disabled', false); 
+                $('#recebe_gif_processando').html('');
+            }
+        },
+        error: function(error) {
+            console.error('Erro ao buscar coordenações:', error);
+            $('#txt_sel_temasub').prop('disabled', true); 
+            $('#txt_sel_temasub').html('<option value="">Erro ao carregar</option>');
+            $('#recebe_gif_processando').html(`Erro ao tentar carregar dados: ${error}`);
+        }
+    });
+}
+
+
+function funcao_pesquisa_produtos_dados() {
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let gerencia_selecionada = $('#txt_sel_gerencia').val();
+    let coordenacao_selecionada = $('#txt_sel_coordenacao').val();
+    let tema_selecionado = $('#txt_sel_tema').val();
+    let temasub = $('#txt_sel_temasub').val();
+    let options = '<option value=""></option>'; 
+        options += "<option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>";    
+    $.ajax({
+        url: 'subtemas',
+        type: 'GET',
+        dataType: 'json',
+        data: { gerencia: gerencia_selecionada, coordenacao: coordenacao_selecionada, tema: tema_selecionado, subtema: temasub },
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        success: function(data) {
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(item => { 
+                    const valorSubtema = item.subtema;
+                    options += `<option value="${valorSubtema}">${valorSubtema}</option>`;
+                    
+                });
+                $('#txt_sel_produto_dados').html(options);
+                $('#txt_sel_produto_dados').prop('disabled', false);
+                $('#recebe_gif_processando').html('');
+            } else {
+                $('#txt_sel_produto_dados').html(options);
+                $('#txt_sel_produto_dados').prop('disabled', false); 
+                $('#recebe_gif_processando').html('');
+            }
+        },
+        error: function(error) {
+            console.error('Erro ao buscar coordenações:', error);
+            $('#txt_sel_produto_dados').prop('disabled', true); 
+            $('#txt_sel_produto_dados').html('<option value="">Erro ao carregar</option>');
+            $('#recebe_gif_processando').html(`Erro ao tentar carregar dados: ${error}`);
+        }
+    });
+}
+
+
+
+function funcao_pesquisa_cadeias() {
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let gerencia_selecionada = $('#txt_sel_gerencia').val();
+    let coordenacao_selecionada = $('#txt_sel_coordenacao').val();
+    let tema_selecionado = $('#txt_sel_tema').val();
+    let temasub_selecionado = $('#txt_sel_temasub').val();
+    let produto_dados_selecionado = $('#txt_sel_produto_dados').val();
+    
+    let options = '<option value=""></option>'; 
+        options += "<option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>";    
+    $.ajax({
+        url: 'pesquisa_cadeias',
+        type: 'GET',
+        dataType: 'json',
+        data: { gerencia: gerencia_selecionada, coordenacao: coordenacao_selecionada, tema: tema_selecionado, subtema: temasub_selecionado, produto_dados: produto_dados_selecionado },
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        success: function(data) {
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(item => { 
+                    const valorCadeia = item.cadeia;
+                    options += `<option value="${valorCadeia}">${valorCadeia}</option>`;
+                    
+                });
+                $('#txt_sel_cadeia').html(options);
+                $('#txt_sel_cadeia').prop('disabled', false);
+                $('#recebe_gif_processando').html('');
+            } else {
+                $('#txt_sel_cadeia').html(options);
+                $('#txt_sel_cadeia').prop('disabled', false); 
+                $('#recebe_gif_processando').html('');
+            }
+        },
+        error: function(error) {
+            console.error('Erro ao buscar coordenações:', error);
+            $('#txt_sel_cadeia').prop('disabled', true); 
+            $('#txt_sel_cadeia').html('<option value="">Erro ao carregar</option>');
+            $('#recebe_gif_processando').html(`Erro ao tentar carregar dados: ${error}`);
+        }
+    });
+}
+
+
+
+function fun_alterar_cadeia() {
+    var dados_formulario = $('form[name="form"]').serialize();
+    var gifUrl = "{{ url_for('static', filename='images/processando.gif') }}";
+    $.ajax({
+        url: '/alterar_cadeia', // Rota Flask para alterar a cadeia
+        type: 'POST',
+        data: dados_formulario,
+        dataType: 'json',
+        beforeSend: function() {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        success: function(data) {
+            $('#recebe_gif_processando').empty();
+            if (data.success) {
+                alert('Cadeia alterada com sucesso!');
+                $('form[name="form"]')[0].reset();
+                funcao_pesquisa_cadeias();
+            } else {
+                alert('Erro ao alterar cadeia: ' + data.message);
+            }
+        },
+        error: function(error) {
+            $('#recebe_gif_processando').empty();
+            console.log('Erro na requisição AJAX:', error);
+            alert('Erro ao alterar cadeia. Verifique o console para mais detalhes.');
+        }
+    });
+}
+
+
+function fun_remover_cadeia(){
+
+    let txt_sel_gerencia = document.getElementById("txt_sel_gerencia").value;
+    let txt_sel_coordenacao = document.getElementById("txt_sel_coordenacao").value;
+    let txt_sel_tema = document.getElementById("txt_sel_tema").value;
+    let txt_sel_temasub = document.getElementById("txt_sel_temasub").value;
+    let txt_sel_produto_dados = document.getElementById("txt_sel_produto_dados").value;
+    let txt_sel_cadeia = document.getElementById("txt_sel_cadeia").value;
+
+    if(txt_sel_coordenacao == '' || txt_sel_coordenacao.length == 0 || txt_sel_coordenacao == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a coordenação.')
+        return;
+    };
+    if(txt_sel_gerencia == '' || txt_sel_gerencia.length == 0 || txt_sel_gerencia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a gerência.')
+        return;
+    };
+    if(txt_sel_tema == '' || txt_sel_tema.length == 0 || txt_sel_tema == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o tema.')
+        return;
+    };
+    if(txt_sel_temasub == '' || txt_sel_temasub.length == 0 || txt_sel_temasub == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o subtema.')
+        return;
+    };
+    if(txt_sel_produto_dados == '' || txt_sel_produto_dados.length == 0 || txt_sel_produto_dados == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o produto de dados.')
+        return;
+    };   
+    if(txt_sel_cadeia == '' || txt_sel_cadeia.length == 0 || txt_sel_cadeia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o nome da cadeia.')
+        return;
+    };
+        
+
+    let confirma = confirm("Tem certeza que deseja remover a cadeia?");
+    if (!confirma) {
+        alert('AÇÃO CANCELADA');
+        return
+    }
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let pagina = "remover_cadeia";
+    $.ajax({
+        type: 'GET',
+        dataType: 'html',
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        data: {
+            txt_sel_gerencia: txt_sel_gerencia,
+            txt_sel_coordenacao: txt_sel_coordenacao,
+            txt_sel_tema: txt_sel_tema,
+            txt_sel_temasub: txt_sel_temasub,
+            txt_sel_produto_dados: txt_sel_produto_dados,
+            txt_sel_cadeia: txt_sel_cadeia
+        },
+        success: function (msg){  
+            $('#recebe_gif_processando').html(msg);                 
+        },
+        error: function (xhr, status, error) {
+            $('#recebe_gif_processando').html('Erro ao processar a requisição.'); 
+            console.error("Erro acesso aos dados:", status, error);
+        }         
+    })   
+
+};
+
+function validar_campos_repeticoes(){
+    let inputA = document.getElementById('txt_num_repeticoes');
+    let inputB = document.getElementById('txt_tempo_entre_execucoes');
+    if (inputA.value > 1) {
+        inputB.disabled = false;
+        inputB.min = 30;
+        inputB.max = 720;
+        if (inputB.value < 30){
+            inputB.value = 30
+        };
+    } else {
+        inputB.disabled = true;
+        inputB.value = 0;
+    };     
+    if (inputB.value == 0) {
+        inputA.value = 1;
+    }                                       
+}
+
+
+function fun_salvar_cadeia(){
+    let txt_sel_gerencia = document.getElementById("txt_sel_gerencia").value;
+    let txt_sel_coordenacao = document.getElementById("txt_sel_coordenacao").value;
+    let txt_sel_tema = document.getElementById("txt_sel_tema").value;
+    let txt_sel_temasub = document.getElementById("txt_sel_temasub").value;
+    let txt_sel_produto_dados = document.getElementById("txt_sel_produto_dados").value;
+    let txt_sel_cadeia = document.getElementById("txt_sel_cadeia").value;
+    let txt_sel_tipo_cadeia = document.getElementById("txt_sel_tipo_cadeia").value;
+    let txt_sel_origem = document.getElementById("txt_sel_origem").value;
+    let txt_sel_destino = document.getElementById("txt_sel_destino").value;
+    let txt_sel_dataset = document.getElementById("txt_sel_dataset").value;
+    let txt_sel_cod_gcp = document.getElementById("txt_sel_cod_gcp").value;
+    let txt_sel_origatoriedade = document.getElementById("txt_sel_origatoriedade").value;
+    let txt_num_repeticoes = document.getElementById("txt_num_repeticoes").value;
+    let txt_tempo_entre_execucoes = document.getElementById("txt_tempo_entre_execucoes").value;
+
+    
+    if(txt_sel_origatoriedade == ''){
+        alert('Necessário informar o monitoramento.');
+        return;        
+    }
+
+    if(txt_num_repeticoes == '' || txt_num_repeticoes == '0'){
+        alert('Necessário informar numero de repetições da cadeia no dia (se não houver repetições informe "1").');
+        return;
+    };
+    if(txt_tempo_entre_execucoes == ''){
+        alert('Necessário informar os minutos de intervalo entre as repetições da cadeia no dia (se não houver repetições informe zero "0").');
+        return;
+    }; 
+
+    if(txt_num_repeticoes != '1' && txt_tempo_entre_execucoes == '0'){
+        alert('O Numero de repetições é maior que 0 (zero), precisa ter um tempo de intervalo.');
+        return;
+    };
+
+    if(txt_num_repeticoes == '1' && txt_tempo_entre_execucoes != '0'){
+        alert('Não pode haver intervalo em cadeias com sem repetições.');
+        return;
+    };    
+
+    if(txt_sel_coordenacao == '' || txt_sel_coordenacao.length == 0 || txt_sel_coordenacao == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a coordenação.')
+        return;
+    };
+    if(txt_sel_gerencia == '' || txt_sel_gerencia.length == 0 || txt_sel_gerencia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a gerência.')
+        return;
+    };
+    if(txt_sel_tema == '' || txt_sel_tema.length == 0 || txt_sel_tema == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o tema.')
+        return;
+    };
+    if(txt_sel_temasub == '' || txt_sel_temasub.length == 0 || txt_sel_temasub == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o subtema.')
+        return;
+    };
+    if(txt_sel_produto_dados == '' || txt_sel_produto_dados.length == 0 || txt_sel_produto_dados == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o produto de dados.')
+        return;
+    };   
+    if(txt_sel_cadeia == '' || txt_sel_cadeia.length == 0 || txt_sel_cadeia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o nome da cadeia.')
+        return;
+    };
+    if(txt_sel_tipo_cadeia == '' || txt_sel_tipo_cadeia.length == 0 || txt_sel_tipo_cadeia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o tipo de cadeia.')
+        return;
+    };                
+    if(txt_sel_origem == '' || txt_sel_origem.length == 0 || txt_sel_origem == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a origem dos dados para a cadeia.')
+        return;
+    };     
+    if(txt_sel_destino == '' || txt_sel_destino.length == 0 || txt_sel_destino == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o destino dos dados para a cadeia.')
+        return;
+    };      
+    if(txt_sel_dataset == '' || txt_sel_dataset.length == 0 || txt_sel_dataset == '[ENTRADA MANUAL]'){
+        alert('Campo Dataset GCP está vazio.')
+        return;
+    };      
+    if(txt_sel_cod_gcp == '' || txt_sel_cod_gcp.length == 0 || txt_sel_cod_gcp == '[ENTRADA MANUAL]'){
+        alert('Campo Dataset Chave GCP está vazio.')
+        return;
+    };       
+
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let pagina = "salvar_nova_cadeia";
+    $.ajax({
+        type: 'GET',
+        dataType: 'html',
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        data: {
+            txt_sel_gerencia: txt_sel_gerencia,
+            txt_sel_coordenacao: txt_sel_coordenacao,
+            txt_sel_tema: txt_sel_tema,
+            txt_sel_temasub: txt_sel_temasub,
+            txt_sel_produto_dados: txt_sel_produto_dados,
+            txt_sel_cadeia: txt_sel_cadeia,
+            txt_sel_tipo_cadeia: txt_sel_tipo_cadeia,
+            txt_sel_origem: txt_sel_origem,
+            txt_sel_destino: txt_sel_destino,
+            txt_sel_dataset: txt_sel_dataset,
+            txt_sel_cod_gcp: txt_sel_cod_gcp,
+            txt_num_repeticoes: txt_num_repeticoes,
+            txt_tempo_entre_execucoes: txt_tempo_entre_execucoes,
+            txt_sel_origatoriedade: txt_sel_origatoriedade
+        },
+        success: function (msg){  
+            $('#recebe_gif_processando').html(msg);                 
+        },
+        error: function (xhr, status, error) {
+            $('#recebe_gif_processando').html('Erro ao processar a requisição.'); 
+            console.error("Erro acesso aos dados:", status, error);
+        }         
+    })   
+
+};
+
+
+
+
+function fun_alterar_cadeia(){
+
+    let txt_sel_gerencia = document.getElementById("txt_sel_gerencia").value;
+    let txt_sel_coordenacao = document.getElementById("txt_sel_coordenacao").value;
+    let txt_sel_tema = document.getElementById("txt_sel_tema").value;
+    let txt_sel_temasub = document.getElementById("txt_sel_temasub").value;
+    let txt_sel_produto_dados = document.getElementById("txt_sel_produto_dados").value;
+    let txt_sel_cadeia = document.getElementById("txt_sel_cadeia").value;
+    let txt_sel_tipo_cadeia = document.getElementById("txt_sel_tipo_cadeia").value;
+    let txt_sel_origem = document.getElementById("txt_sel_origem").value;
+    let txt_sel_destino = document.getElementById("txt_sel_destino").value;
+    let txt_sel_dataset = document.getElementById("txt_sel_dataset").value;
+    let txt_sel_cod_gcp = document.getElementById("txt_sel_cod_gcp").value;
+    let txt_sel_origatoriedade = document.getElementById("txt_sel_origatoriedade").value;
+
+    let txt_num_repeticoes = document.getElementById("txt_num_repeticoes").value;
+    let txt_tempo_entre_execucoes = document.getElementById("txt_tempo_entre_execucoes").value;
+
+    if(txt_sel_origatoriedade == ''){
+        alert('Necessário informar o monitoramento.');
+        return;        
+    }    
+
+    if(txt_num_repeticoes == '' || txt_num_repeticoes == '0'){
+        alert('Necessário informar numero de repetições da cadeia no dia (se não houver repetições informe "1").');
+        return;
+    };
+    if(txt_tempo_entre_execucoes == ''){
+        alert('Necessário informar os minutos de intervalo entre as repetições da cadeia no dia (se não houver repetições informe zero "0").');
+        return;
+    }; 
+
+    if(txt_num_repeticoes != '1' && txt_tempo_entre_execucoes == '0'){
+        alert('O Numero de repetições é maior que 0 (zero), precisa ter um tempo de intervalo.');
+        return;
+    };
+
+    if(txt_num_repeticoes == '1' && txt_tempo_entre_execucoes != '0'){
+        alert('Não pode haver intervalo em cadeias com sem repetições.');
+        return;
+    };    
+
+    if(txt_sel_coordenacao == '' || txt_sel_coordenacao.length == 0 || txt_sel_coordenacao == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a coordenação.')
+        return;
+    };
+    if(txt_sel_gerencia == '' || txt_sel_gerencia.length == 0 || txt_sel_gerencia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a gerência.')
+        return;
+    };
+    if(txt_sel_tema == '' || txt_sel_tema.length == 0 || txt_sel_tema == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o tema.')
+        return;
+    };
+    if(txt_sel_temasub == '' || txt_sel_temasub.length == 0 || txt_sel_temasub == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o subtema.')
+        return;
+    };
+    if(txt_sel_produto_dados == '' || txt_sel_produto_dados.length == 0 || txt_sel_produto_dados == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o produto de dados.')
+        return;
+    };   
+    if(txt_sel_cadeia == '' || txt_sel_cadeia.length == 0 || txt_sel_cadeia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o nome da cadeia.')
+        return;
+    };
+    if(txt_sel_tipo_cadeia == '' || txt_sel_tipo_cadeia.length == 0 || txt_sel_tipo_cadeia == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o tipo de cadeia.')
+        return;
+    };                
+    if(txt_sel_origem == '' || txt_sel_origem.length == 0 || txt_sel_origem == '[ENTRADA MANUAL]'){
+        alert('Necessário informar a origem dos dados para a cadeia.')
+        return;
+    };     
+    if(txt_sel_destino == '' || txt_sel_destino.length == 0 || txt_sel_destino == '[ENTRADA MANUAL]'){
+        alert('Necessário informar o destino dos dados para a cadeia.')
+        return;
+    };      
+    if(txt_sel_dataset == '' || txt_sel_dataset.length == 0 || txt_sel_dataset == '[ENTRADA MANUAL]'){
+        alert('Campo Dataset GCP está vazio.')
+        return;
+    };      
+    if(txt_sel_cod_gcp == '' || txt_sel_cod_gcp.length == 0 || txt_sel_cod_gcp == '[ENTRADA MANUAL]'){
+        alert('Campo Dataset Chave GCP está vazio.')
+        return;
+    };       
+
+    let gifUrl = "{{ url_for('static', filename='images/static_img/processando.gif') }}";
+    let pagina = "alterar_cadeia";
+    $.ajax({
+        type: 'GET',
+        dataType: 'html',
+        url: pagina,
+        beforeSend: function () {
+            $('#recebe_gif_processando').html(`<img src="${gifUrl}" alt="Aguardando...">`);
+        },
+        data: {
+            txt_sel_gerencia: txt_sel_gerencia,
+            txt_sel_coordenacao: txt_sel_coordenacao,
+            txt_sel_tema: txt_sel_tema,
+            txt_sel_temasub: txt_sel_temasub,
+            txt_sel_produto_dados: txt_sel_produto_dados,
+            txt_sel_cadeia: txt_sel_cadeia,
+            txt_sel_tipo_cadeia: txt_sel_tipo_cadeia,
+            txt_sel_origem: txt_sel_origem,
+            txt_sel_destino: txt_sel_destino,
+            txt_sel_dataset: txt_sel_dataset,
+            txt_sel_cod_gcp: txt_sel_cod_gcp,
+            txt_num_repeticoes: txt_num_repeticoes,
+            txt_tempo_entre_execucoes: txt_tempo_entre_execucoes,
+            txt_sel_origatoriedade: txt_sel_origatoriedade
+        },
+        success: function (msg){  
+            $('#recebe_gif_processando').html(msg);                 
+        },
+        error: function (xhr, status, error) {
+            $('#recebe_gif_processando').html('Erro ao processar a requisição.'); 
+            console.error("Erro acesso aos dados:", status, error);
+        }         
+    })   
+
+};
+
+
+
+
+
+
+</script>
+
+
+        <form method="post" action="#" name="form">
+        <br>
+        <div class='_cadastro_cadeias'>
+            <br>
+
+            <div class='acima' style='width:45.5%;'>
+                <label for='txt_sel_gerencia'><strong>Gerência:</strong></label><br>
+                <select id='txt_sel_gerencia' name='txt_sel_gerencia' required class='txt' style='width:97%' onchange="funcao_pesquisa_coordenacao();">
+                    <option value=''></option>
+                    {% for gerencia in gerencias %}
+                        <option value="{{ gerencia }}">{{ gerencia }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class='acima' style='width:45%;'>
+                <label for='txt_sel_coordenacao'><strong>Coordenação:</strong></label><br>
+                <select id='txt_sel_coordenacao' name='txt_sel_coordenacao' required class='txt' style='width:97%' onchange="funcao_pesquisa_temas();" disabled>
+                    <option value=""></option>
+                </select>
+            </div>
+
+            <br>
+            <br>
+
+            <div class='acima' style='width:30%;'>
+                <label for='txt_sel_tema'><strong><font color="#2E86C1">Tema:</font></strong></label><br>
+                <select id='txt_sel_tema' name='txt_sel_tema' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);funcao_pesquisa_subtemas();" disabled>
+                    <option value=""></option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:30%;'>
+                <label for='txt_sel_temasub'><strong>Sub-Tema:</strong></label><br>
+                <select id='txt_sel_temasub' name='txt_sel_temasub' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);funcao_pesquisa_produtos_dados();" disabled>
+                    <option value=""></option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:30%;'>
+                <label for='txt_sel_produto_dados'><strong>Produto de Dados:</strong></label><br>
+                <select id='txt_sel_produto_dados' name='txt_sel_produto_dados' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);funcao_pesquisa_cadeias();" disabled>
+                    <option value=""></option>
+                </select>
+            </div>
+
+            <br>
+            <br>
+
+            <div class='acima' style='width:30%;'>
+                <label for='txt_sel_cadeia'><strong><font color="#2E86C1">Cadeia:</font></strong></label><br>
+                <select id='txt_sel_cadeia' name='txt_sel_cadeia' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);" disabled>
+                    <option value=""></option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:10.8%;'>
+                <label for='txt_sel_tipo_cadeia'><strong>Tipo Cadeia:</strong></label><br>
+                <select id='txt_sel_tipo_cadeia' name='txt_sel_tipo_cadeia' required class='txt' style='width:97%'>
+                    <option value=''></option>
+                    <option value='EXTRAÇÃO'>EXTRAÇÃO</option>
+                    <option value='TRATAMENTO'>TRATAMENTO</option>
+                    <option value='INGESTÃO'>INGESTÃO</option>
+                    <option value='OUTRO'>OUTRO</option>
+                </select>
+            </div>
+
+            <div class='acima' style='width:9%;'>
+                <label for='txt_sel_origem'><strong>Sistema Origem:</strong></label><br>
+                <select id='txt_sel_origem' name='txt_sel_origem' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);">
+                    <option value=''></option>
+                    <option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>
+                    <option value='NÃO SE APLICA'>NÃO SE APLICA</option>
+                    {% for sistema_origem in sistemas_origem %}
+                        <option value="{{ sistema_origem['sis_origem'] }}">{{ sistema_origem['sis_origem'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class='acima' style='width:9%;'>
+                <label for='txt_sel_destino'><strong>Sistema Destino:</strong></label><br>
+                <select id='txt_sel_destino' name='txt_sel_destino' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);">
+                    <option value=''></option>
+                    <option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>
+                    <option value='NÃO SE APLICA'>NÃO SE APLICA</option>
+                    {% for sistema_destino in sistemas_destino %}
+                        <option value="{{ sistema_destino['sis_destino'] }}">{{ sistema_destino['sis_destino'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>   
+
+
+            <div class='acima' style='width:14.7%;'>
+                <label for='txt_sel_dataset'><strong>Dataset GCP:</strong></label><br>
+                <select id='txt_sel_dataset' name='txt_sel_dataset' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);">
+                    <option value=''></option>
+                    <option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>
+                    <option value='NÃO SE APLICA'>NÃO SE APLICA</option>
+                    {% for dataset_gcp in datasets_gcp %}
+                        <option value="{{ dataset_gcp['dataset_gcp'] }}">{{ dataset_gcp['dataset_gcp'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <div class='acima' style='width:14.7%;'>
+                <label for='txt_sel_cod_gcp'><strong>Chave GCP:</strong></label><br>
+                <select id='txt_sel_cod_gcp' name='txt_sel_cod_gcp' required class='txt' style='width:97%' onchange="novo_valor_select(this.selectedIndex, this);">
+                    <option value=''></option>
+                    <option value='[ENTRADA MANUAL]'>[ENTRADA MANUAL]</option>
+                    <option value='NÃO SE APLICA'>NÃO SE APLICA</option>
+                    {% for chave_gcp in chaves_gcp %}
+                        <option value="{{ chave_gcp['chave_gcp'] }}">{{ chave_gcp['chave_gcp'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <br>
+            <br>
+
+            <input type="button" title="Todos os campos são obrigatórios para realizar essa ação." value="Criar" onclick="fun_salvar_cadeia()" class="bt" name="btSalvar" id="btSalvar"/>
+            <input type="button" title="Todos os campos são obrigatórios para realizar essa ação. Entretanto os campos de Gerência, Coordenação, Tema e Cadeia não serão alterados, eles serão usados para identificar o item que precisa ser alterado." value="Alterar" onclick="fun_alterar_cadeia()" class="bt" name="btAlterar" id="btAlterar"/>
+            <input type="button" title="Os campos Gerência, Coordenação, Tema, Subtema, Produto de Dados e  Cadeia são obrigatórios para realizar essa ação." value="Remover" onclick="fun_remover_cadeia()" class="bt" name="btRemover" id="btRemover"/>
+
+            <br><br><br>
+
+            <div class='_cad_cadeias_recorrencia' style='width:35%;'>
+
+                <div class='acima'>
+                    <label for='txt_num_repeticoes'><strong>Num. Repetições:</strong></label><br>
+                    <input type='number' id='txt_num_repeticoes' name='txt_num_repeticoes' min='1' max='48' value='1' onchange="validar_campos_repeticoes();" onkeyup="if(value<1 || value>48) value='1';" maxlength='2' class='txt' style='width:97%'/>
+                </div>  
+
+                <div class='acima'>
+                    <label for='txt_tempo_entre_execucoes'><strong>Min. Entre as Exec.:</strong></label><br>
+                    <input type='number' id='txt_tempo_entre_execucoes' name='txt_tempo_entre_execucoes' min='0' max='720' step="15" value='0' onchange="validar_campos_repeticoes();" onkeyup="value='0';" maxlength='3' class='txt' style='width:96%'/>
+                </div>  
+
+                <div class='acima'>
+                    <label for='txt_sel_origatoriedade'><strong>Considerar concluída:</strong></label><br>
+                    <select type='number' id='txt_sel_origatoriedade' name='txt_sel_origatoriedade' min='0' max='720' step="15" value='0' class='txt' style='width:100%'>
+                        <option value='0'>Normal</option>
+                        <option value='1'>1x com sucesso</option>
+                        <option value='2'>Todas as repetições com sucesso</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <br><br>
+            <label id='recebe_gif_processando'></label>
+            <br><br><br>
+        </div>
+    </body>
+    <script>
+        window.onload = function() {
+            funcao_pesquisa_gerencias();
+        };
+    </script>
+</html>

@@ -1,0 +1,12 @@
+cryptography==41.0.2
+google-cloud-bigquery
+google-cloud-bigquery-storage
+google-cloud-storage
+paramiko==3.2.0
+pywin32==306
+psutil==5.9.5
+psycopg2
+pyftpdlib==1.5.6
+pycryptodome==3.20.0
+google-auth
+pywinauto==0.6.9

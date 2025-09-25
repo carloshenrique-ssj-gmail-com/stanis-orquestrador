@@ -1,0 +1,105 @@
+<header>
+  <meta http-equiv='Content-Type' content='text/html' charset='UTF-8'>
+  <nav>
+    <ul>
+      <li><a href="{{ url_for('inicio') }}">Início</a></li>
+
+      <li class='dropdown'>
+        <a href='#' class='dropbtn'>Cadeias</a>
+          <div class='dropdown-content'>
+              <a href="{{ url_for('wrk_cadastro_cadeias') }}">Cadastrar Cadeias</a>
+              <a href="./wrk_unir">Associar Tarefas nas Cadeias</a>           
+          </div>
+      </li>
+      
+      <li class='dropdown'>
+        <a href="{{ url_for('wrk_01_tf') }}" class='dropbtn'>Arquivos</a>
+        <div class='dropdown-content'>
+          <a href="{{ url_for('wrk_01_tf') }}">Mover ou Copiar Arquivo Local</a>
+        </div>
+      </li>
+
+      <li class='dropdown'>
+        <a href='#' class='dropbtn'>GCP</a>
+        <div class='dropdown-content'>
+          <a href="{{ url_for('wrk_02_up_gcp') }}">Upload de Arquivo para GCP</a>
+          <a href="{{ url_for('wrk_03_down_gcp') }}">Download de Arquivo da GCP</a> 
+          <a href="{{ url_for('wrk_04_procedure_gcp') }}">Executar Procedure na GCP</a>
+          <a href="{{ url_for('wrk_12_gcp_csv_tbl') }}">Carregar CSV na GCP para Tabela</a>
+        </div>
+    </li>
+
+    <li class='dropdown'>
+      <a href='#' class='dropbtn'>Python</a>
+      <div class='dropdown-content'>
+        <a href="{{ url_for('wrk_05_script_py') }}">Executar um Script Python</a>
+        <a href="{{ url_for('wrk_11_funcao_true_py') }}">Função Python para Gatilho</a>
+      </div>
+    </li>
+
+    <li class='dropdown'>
+      <a href='#' class='dropbtn'>SAS</a>
+      <div class='dropdown-content'>
+        <a href="{{ url_for('wrk_08_up_srv_sas') }}">Upload de Arquivo para Servidor SAS</a>
+        <a href="{{ url_for('wrk_09_down_srv_sas') }}">Download de Arquivo do Servidor SAS</a> 
+        <a href="{{ url_for('wrk_06_script_sas') }}">Executar Projeto EGP SAS</a>
+      </div>
+    </li>
+
+    <li class='dropdown'>
+      <a href="{{ url_for('wrk_07_excel_vba') }}" class='dropbtn'>VBA</a>
+      <div class='dropdown-content'>
+        <a href="{{ url_for('wrk_07_excel_vba') }}" >Executar VBA no Excel</a>
+      </div>
+    </li>
+
+    <li class='dropdown'>
+      <a href="{{ url_for('wrk_10_script_vbs') }}"  class='dropbtn'>VBS</a>
+      <div class='dropdown-content'>
+        <a href="{{ url_for('wrk_10_script_vbs') }}">Executar Script VBS</a>
+      </div>
+    </li>
+
+
+    <li class='dropdown'>
+      <a href="{{ url_for('wrk_13_tf_mft') }}"  class='dropbtn'>MFT</a>
+      <div class='dropdown-content'>
+        <a href="{{ url_for('wrk_13_tf_mft') }}">Movimento Arquivos MFT</a>
+      </div>
+    </li>
+
+    <li class='dropdown'>
+      <a href="{{ url_for('wrk_hierarquia') }}" class='dropbtn'>Pipeline</a>
+      <div class='dropdown-content'>
+        <a href="{{ url_for('wrk_hierarquia') }}">Gráficos Cadeias</a>
+      </div>
+    </li>
+
+
+
+    <li class='dropdown'>
+      <a href='#' class='dropbtn'>Admin</a>
+      <div class='dropdown-content'>
+        <a href="{{ url_for('usuarios_cad') }}">Cadastro Usuarios</a>
+        <a href="{{ url_for('hostnames_cad') }}">Cadastro Maquinas</a>
+        <a href="{{ url_for('graficos') }}">Graficos</a>
+        <a href="{{ url_for('cad_chat') }}">Cadastro Google Chat</a>
+    <a href="{{ url_for('licencas_software_livre') }}">Licenças de software livre</a>
+      </div>
+    </li>
+
+
+    <li style='margin-left: auto;position: absolute; top: -5px;left:94%;'>
+      <a href='#'>
+        <span>
+          <label id='vDark001' for='switch'>
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" width='50px' height='50px'>
+          </label>
+        </span>
+      </a>
+    </li>
+
+
+    </ul>
+  </nav>
+</header>
